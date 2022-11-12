@@ -1,0 +1,29 @@
+{
+	"info": {
+		"name": "{{appName}}",
+		"description": "{{appDescription}}",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+	{{#apiInfo}}
+	{{#apis}}
+	{{#operations}}
+	{{#operation}}
+	{{>item}}{{^-last}},{{/-last}}
+    {{/operation}}{{^-last}},{{/-last}}
+    {{/operations}}
+    {{/apis}}
+    {{/apiInfo}}
+    ],
+	"variable": [
+	    {{#servers}}
+	    {{#-first}}
+		{
+			"key": "baseUrl",
+			"value": "{{url}}",
+			"type": "string"
+		}
+        {{/-first}}
+	    {{/servers}}
+	]
+}
