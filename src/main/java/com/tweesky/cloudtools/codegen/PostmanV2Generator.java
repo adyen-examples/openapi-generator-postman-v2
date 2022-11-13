@@ -51,9 +51,30 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     OperationMap ops = results.getOperations();
     List<CodegenOperation> opList = ops.getOperation();
 
-    // iterate over the operation and perhaps modify something
+    // iterate over the operations to customise operations
     for(CodegenOperation co : opList){
-      //LOGGER.info("co " + co.headerParams.get(0));
+
+      if(co.produces != null && co.produces.get(0) != null) {
+        // produces mediaType as `Accept` header (use first mediaType only)
+        String mediaType = co.produces.get(0).get("mediaType");
+        CodegenParameter acceptHeader = new CodegenParameter();
+        acceptHeader.paramName = "Accept";
+        CodegenProperty schema = new CodegenProperty();
+        schema.defaultValue = mediaType;
+        acceptHeader.setSchema(schema);
+        co.headerParams.add(0, acceptHeader);
+      }
+
+      if(co.consumes != null && co.consumes.get(0) != null) {
+        // consumes mediaType as `Content-Type` header (use first mediaType only)
+        String mediaType = co.consumes.get(0).get("mediaType");
+        CodegenParameter contentTypeHeader = new CodegenParameter();
+        contentTypeHeader.paramName = "Content-Type";
+        CodegenProperty schema = new CodegenProperty();
+        schema.defaultValue = mediaType;
+        contentTypeHeader.setSchema(schema);
+        co.headerParams.add(0, contentTypeHeader);
+      }
 
       String[] pathSegments = co.path.substring(1).split("/");
       // add path segments to operation
