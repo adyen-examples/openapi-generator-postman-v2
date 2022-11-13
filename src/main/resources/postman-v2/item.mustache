@@ -9,7 +9,7 @@
 						{{#headerParams}}
                             {
                                 "key": "{{paramName}}",
-                                "value": "{{schema.defaultValue}}"
+                                "value": "{{schema.example}}"
                             }{{^-last}},{{/-last}}
                         {{/headerParams}}
 						],
@@ -69,7 +69,7 @@
 							    {{#headers}}
 								{
 									"key": "{{name}}",
-									"value": "{{defaultValue}}"
+									"value": "{{example}}"
 								}{{^-last}},{{/-last}}
 							    {{/headers}}
 							],
