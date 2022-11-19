@@ -22,8 +22,15 @@
 			"key": "baseUrl",
 			"value": "{{url}}",
 			"type": "string"
-		}
+		},
         {{/-first}}
 	    {{/servers}}
+		{{#apiInfo}}{{#apis}}{{#vendorExtensions}}{{#-first}}{{#variables}}{
+	        {{! use first element in vendorExtensions }}
+			"key": "{{name}}",
+			"value": "{{example}}",
+			"type": "{{type}}"
+		}{{^-last}},{{/-last}}{{/variables}}{{/-first}}{{/vendorExtensions}}{{/apis}}{{/apiInfo}}
 	]
 }
+
