@@ -1,5 +1,6 @@
 package com.tweesky.cloudtools.codegen;
 
+import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
 import org.slf4j.Logger;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * OpenAPI generator for Postman format v2.1
@@ -17,6 +20,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   // source folder where to write the files
   protected String sourceFolder = "src";
   protected String apiVersion = "1.0.0";
+
+  Set<PostmanVariable> variables = new HashSet<>();
 
   protected Map<String, Object> additionalProperties = new HashMap<>();
 
@@ -40,12 +45,26 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return "postman-v2";
   }
 
+  @Override
+  public void postProcessParameter(CodegenParameter parameter) {
+    if(parameter.isPathParam) {
+      variables.add(new PostmanVariable()
+              .addName(parameter.paramName)
+              .addType(parameter.dataType)
+              .addExample(parameter.example));
+    }
+  }
+
+  @Override
+  public void processOpts() {
+    super.processOpts();
+    super.vendorExtensions().put("variables", variables);
+  }
   /**
    * Provides an opportunity to inspect and modify operation data before the code is generated.
    */
   @Override
   public OperationsMap postProcessOperationsWithModels(OperationsMap objs, List<ModelMap> allModels) {
-
     OperationsMap results = super.postProcessOperationsWithModels(objs, allModels);
 
     OperationMap ops = results.getOperations();
@@ -79,10 +98,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         co.headerParams.add(0, contentTypeHeader);
       }
 
+      // build pathSegments
       String[] pathSegments = co.path.substring(1).split("/");
-      // add path segments to operation
       co.vendorExtensions.put("pathSegments", pathSegments);
-      // add path segments to responses
       co.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
     }
 

@@ -1,0 +1,71 @@
+package com.tweesky.cloudtools.codegen.model;
+
+import java.util.Objects;
+
+public class PostmanVariable {
+
+    private String name;
+    private String type;
+    private String example;
+
+    public PostmanVariable addName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public PostmanVariable addType(String type) {
+        this.type = type;
+        return this;
+    }
+
+    public PostmanVariable addExample(String example) {
+        this.example = example;
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getExample() {
+        return example;
+    }
+
+    public void setExample(String example) {
+        this.example = example;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostmanVariable that = (PostmanVariable) o;
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "PostmanVariable{" +
+                "name='" + name + '\'' +
+                ", type='" + type + '\'' +
+                ", example='" + example + '\'' +
+                '}';
+    }
+}
