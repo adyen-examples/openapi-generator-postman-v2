@@ -13,6 +13,16 @@
                             }{{^-last}},{{/-last}}
                         {{/headerParams}}
 						],
+						"body": {
+                            "mode": "raw",
+                            {{! use first example }}
+                            "raw": {{#examples}}{{#-first}}{{{example}}}{{/-first}}{{/examples}},
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
 						"url": {
 							"raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
 							"host": [
@@ -23,14 +33,13 @@
 							    "{{.}}"{{^-last}},{{/-last}}
 							    {{/vendorExtensions.pathSegments}}
 							],
-							"variable": [
-							    {{#pathParams}}
+							"query": [
+							    {{#queryParams}}
 								{
 									"key": "{{paramName}}",
-									"value": "",
-									"description": "{{description}}"
+									"value": "{{example}}"
 								}{{^-last}},{{/-last}}
-							    {{/pathParams}}
+							    {{/queryParams}}
 							]
 						},
 						"description": "{{notes}}"
@@ -73,7 +82,7 @@
 								}{{^-last}},{{/-last}}
 							    {{/headers}}
 							],
-							"body": "{\n  \"id\": 142,\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Smith\",\n  \"email\": \"alice.smith@gmail.com\",\n  \"dateOfBirth\": \"1997-10-31\",\n  \"emailVerified\": true,\n  \"signUpDate\": \"2019-08-24\"\n}"
+							"body": ""
 						}{{^-last}},{{/-last}}
 						{{/responses}}
 					]
