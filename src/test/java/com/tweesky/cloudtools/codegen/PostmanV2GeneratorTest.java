@@ -20,4 +20,11 @@ public class PostmanV2GeneratorTest {
     generator.opts(clientOptInput).generate();
   }
 
+  @Test
+  public void extractVariables() {
+    String str = "/api/{var}/archive";
+
+    assertEquals(1, new PostmanV2Generator().extractVariables(str).size());
+  }
+
 }
