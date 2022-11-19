@@ -51,9 +51,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     OperationMap ops = results.getOperations();
     List<CodegenOperation> opList = ops.getOperation();
 
-    // iterate over the operations to customise operations
-    for(CodegenOperation co : opList){
 
+    // iterate over the operations to customise operations
+    for(CodegenOperation co : opList) {
+      co.path = doubleCurlyBraces(co.path);
+
+      // request headers
       if(co.produces != null && co.produces.get(0) != null) {
         // produces mediaType as `Accept` header (use first mediaType only)
         String mediaType = co.produces.get(0).get("mediaType");
