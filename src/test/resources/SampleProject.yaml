@@ -1,6 +1,4 @@
 openapi: 3.0.0
-x-stoplight:
-  id: 32xvl4146vb2a
 info:
   title: Sample project
   version: '1.0'
@@ -16,10 +14,53 @@ servers:
   - url: 'http://localhost:5001'
     description: Beppe Catanese
 paths:
+  '/users/':
+    get:
+      summary: Get User Info by Query Param
+      operationId: get-users-query-id
+      description: Retrieve the information of the user with the matching user ID.
+      tags:
+        - basic
+      parameters:
+        - description: Query Id.
+          name: pUserId
+          in: query
+          required: true
+          schema:
+            type: string
+            example: 888
+
+      responses:
+        '200':
+          description: User Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                Get User Alice Smith:
+                  value:
+                    id: 142
+                    firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+        '404':
+          description: User Not Found
   '/users/{userId}':
     parameters:
       - schema:
           type: integer
+          example: 999
+        examples:
+          a:
+            value: a
+            summary: a summary
+          b:
+            value: b
+            summary: b summary
         name: userId
         in: path
         required: true
@@ -46,16 +87,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-              examples:
-                Get User Alice Smith:
-                  value:
-                    id: 142
-                    firstName: Alice
-                    lastName: Smith
-                    email: alice.smith@gmail.com
-                    dateOfBirth: '1997-10-31'
-                    emailVerified: true
-                    signUpDate: '2019-08-24'
+                example:
+                  id: 9998
+                  firstName: Alice9998 resp example
+                  lastName: Smith9998
+                  email: alice.smith@gmail.com
+                  dateOfBirth: '1997-10-31'
+                  emailVerified: true
+                  createDate: '2019-08-24'
         '404':
           description: User Not Found
       operationId: get-users-userId
@@ -126,15 +165,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
               examples:
-                New User Bob Fellow:
-                  value:
-                    id: 12
-                    firstName: Bob
-                    lastName: Fellow
-                    email: bob.fellow@gmail.com
-                    dateOfBirth: '1996-08-24'
-                    emailVerified: false
-                    createDate: '2020-11-18'
+                basic:
+                  $ref: '#/components/examples/get-user-basic'
         '400':
           description: Missing Required Information
         '409':
@@ -162,9 +194,9 @@ paths:
             examples:
               Create User Bob Fellow:
                 value:
-                  firstName: Bob
-                  lastName: Fellow
-                  email: bob.fellow@gmail.com
+                  firstName: Betty
+                  lastName: Reds
+                  email: betty.red@gmail.com
                   dateOfBirth: '1996-08-24'
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
@@ -178,35 +210,34 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-API-Key
   schemas:
     User:
       title: User
       type: object
       description: ''
-      x-examples:
-        Alice Smith:
-          id: 142
-          firstName: Alice
-          lastName: Smith
-          email: alice.smith@gmail.com
-          dateOfBirth: '1997-10-31'
-          emailVerified: true
-          signUpDate: '2019-08-24'
+      example:
+        id: 999
+        firstName: Alice9 schema example
+        lastName: Smith9
+        email: alice.smith@gmail.com
+        dateOfBirth: '1997-10-31'
+        emailVerified: true
+        createDate: '2019-08-24'
       properties:
         id:
           type: integer
           description: Unique identifier for the given user.
+          example: 0
         firstName:
           type: string
+          example: Alix
         lastName:
           type: string
+          example: Smith
         email:
           type: string
           format: email
+          example: alix.smith@gmail.com
         dateOfBirth:
           type: string
           format: date
@@ -214,16 +245,29 @@ components:
         emailVerified:
           type: boolean
           description: Set to true if the user's email has been verified.
+          example: true
         createDate:
           type: string
           format: date
           description: The date that the user was created.
+          example: '2019-08-24'
       required:
         - id
         - firstName
         - lastName
         - email
         - emailVerified
+  examples:
+    get-user-basic:
+      summary: Example request for Get User
+      value:
+        id: 777
+        firstName: Alotta
+        lastName: Rotta
+        email: alotta.rotta@gmail.com
+        dateOfBirth: '1997-10-31'
+        emailVerified: true
+        createDate: '2019-08-24'
 tags:
   - name: basic
     description: Basic tag
