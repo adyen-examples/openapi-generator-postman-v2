@@ -12,17 +12,17 @@
                                 "value": "{{schema.defaultValue}}"
                             }{{^-last}},{{/-last}}
                         {{/headerParams}}
-						],
+						],{{#bodyParam.jsonSchema}}{{#examples}}
 						"body": {
                             "mode": "raw",
                             {{! use first example }}
-                            "raw": {{#examples}}{{#-first}}{{{example}}}{{/-first}}{{/examples}},
+                            "raw": {{#-first}}{{{example}}}{{/-first}},
                             "options": {
                                 "raw": {
                                     "language": "json"
                                 }
                             }
-                        },
+                        },{{/examples}}{{/bodyParam.jsonSchema}}
 						"url": {
 							"raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
 							"host": [
@@ -83,7 +83,7 @@
 							    {{/headers}}
 							],
                             {{! use first example }}
-                            "body": {{#examples}}{{#-first}}{{{example}}}{{/-first}}{{/examples}}
+                            "body": {{#examples}}{{#-first}}{{{example}}}{{/-first}}{{/examples}}}
 						}{{^-last}},{{/-last}}
 						{{/responses}}
 					]
