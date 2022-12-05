@@ -140,6 +140,20 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return responseBody;
   }
 
+  String getRequestBody(CodegenOperation codegenOperation) {
+    String requestBody = null;
+
+    if(codegenOperation.getHasBodyParam()) {
+      if(codegenOperation.bodyParam.example != null) {
+        requestBody = codegenOperation.bodyParam.example;
+      } else if(codegenOperation.bodyParam.getSchema() != null) {
+        requestBody = codegenOperation.bodyParam.getSchema().getExample();
+      }
+    }
+
+    return requestBody;
+  }
+
   /**
    * Returns human-friendly help for the generator.  Provide the consumer with help
    * tips, parameters here
