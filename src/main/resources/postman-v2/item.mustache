@@ -33,6 +33,15 @@
 							    "{{.}}"{{^-last}},{{/-last}}
 							    {{/vendorExtensions.pathSegments}}
 							],
+                            "variable": [
+                                {{#pathParams}}
+                                {
+                                    "key": "{{paramName}}",
+                                    "value": "",
+                                    "description": "{{description}}"
+                                }{{^-last}},{{/-last}}
+                            {{/pathParams}}
+                            ],
 							"query": [
 							    {{#queryParams}}
 								{
