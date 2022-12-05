@@ -12,11 +12,11 @@
                                 "value": "{{schema.defaultValue}}"
                             }{{^-last}},{{/-last}}
                         {{/headerParams}}
-						],{{#bodyParam.jsonSchema}}{{#examples}}
+						],{{#vendorExtensions.hasRequestBody}}
 						"body": {
                             "mode": "raw",
                             {{! use first example }}
-                            "raw": {{#-first}}{{{example}}}{{/-first}},
+                            "raw": {{{vendorExtensions.requestBody}}},
                             "options": {
                                 "raw": {
                                     "language": "json"

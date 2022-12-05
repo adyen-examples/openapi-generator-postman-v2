@@ -104,6 +104,14 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       co.vendorExtensions.put("pathSegments", pathSegments);
       co.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
+      String requestBody = getRequestBody(co);
+      if(requestBody != null) {
+        co.vendorExtensions.put("requestBody", getRequestBody(co));
+        co.vendorExtensions.put("hasRequestBody", true);
+      } else {
+        co.vendorExtensions.put("hasRequestBody", false);
+      }
+
       for(CodegenResponse codegenResponse : co.responses) {
         Object responseBody = getResponseBody(codegenResponse);
 
