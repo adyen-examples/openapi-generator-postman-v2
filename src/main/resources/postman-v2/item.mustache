@@ -82,7 +82,7 @@
 								}{{^-last}},{{/-last}}
 							    {{/headers}}
 							],
-                            "body": {{{vendorExtensions.responseBody}}}
+                            "body": {{#vendorExtensions.hasResponseBody}}{{{vendorExtensions.responseBody}}}{{/vendorExtensions.hasResponseBody}}{{^vendorExtensions.hasResponseBody}}""{{/vendorExtensions.hasResponseBody}}
 						}{{^-last}},{{/-last}}
 						{{/responses}}
 					]
