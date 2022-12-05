@@ -82,8 +82,7 @@
 								}{{^-last}},{{/-last}}
 							    {{/headers}}
 							],
-                            {{! use first example }}
-                            "body": {{#examples}}{{#-first}}{{{example}}}{{/-first}}{{/examples}}}
+                            "body": {{{vendorExtensions.responseBody}}}
 						}{{^-last}},{{/-last}}
 						{{/responses}}
 					]

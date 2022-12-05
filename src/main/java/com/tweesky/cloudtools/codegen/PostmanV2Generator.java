@@ -1,6 +1,7 @@
 package com.tweesky.cloudtools.codegen;
 
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
+import io.swagger.v3.oas.models.examples.Example;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
 import org.slf4j.Logger;
@@ -102,9 +103,26 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       String[] pathSegments = co.path.substring(1).split("/");
       co.vendorExtensions.put("pathSegments", pathSegments);
       co.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
+
+      for(CodegenResponse codegenResponse : co.responses) {
+        codegenResponse.vendorExtensions.put("responseBody", getResponseBody(codegenResponse));
+      }
     }
 
     return results;
+  }
+
+  Object getResponseBody(CodegenResponse codegenResponse) {
+    Object responseBody = null;
+
+    if(codegenResponse.getContent() != null) {
+      Map<String, Example> maxExamples = codegenResponse.getContent().get("application/json").getExamples();
+      if(maxExamples != null && maxExamples.values().iterator().hasNext()) {
+        responseBody = maxExamples.values().iterator().next().getValue();
+      }
+    }
+
+    return responseBody;
   }
 
   /**
