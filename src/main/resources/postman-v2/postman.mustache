@@ -15,17 +15,13 @@
     {{/apis}}
     {{/apiInfo}}
     ],
-	"variable": [
-	    {{#servers}}
-	    {{#-first}}
+	"variable": [{{#servers}}{{#-first}}
 		{
 			"key": "baseUrl",
 			"value": "{{url}}",
 			"type": "string"
-		},
-        {{/-first}}
-	    {{/servers}}
-		{{#apiInfo}}{{#apis}}{{#vendorExtensions}}{{#-first}}{{#variables}}{
+		}{{/-first}}{{/servers}}{{#apiInfo}}{{#apis}}{{#vendorExtensions}}{{#-first}}{{#variables}}{{#-first}},{{/-first}}
+		{
 	        {{! use first element in vendorExtensions }}
 			"key": "{{name}}",
 			"value": "{{example}}",
