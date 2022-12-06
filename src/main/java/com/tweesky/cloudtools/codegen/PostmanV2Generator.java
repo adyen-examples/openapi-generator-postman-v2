@@ -269,7 +269,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return variables;
   }
 
-  private String doubleCurlyBraces(String str) {
+  String doubleCurlyBraces(String str) {
     return str.replace("{", "{{").replace("}", "}}");
 
   }
