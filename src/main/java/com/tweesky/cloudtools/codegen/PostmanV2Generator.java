@@ -274,4 +274,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   }
 
+  String extractExampleByName(String ref) {
+    return ref.substring(ref.lastIndexOf("/") + 1);
+  }
+
 }
