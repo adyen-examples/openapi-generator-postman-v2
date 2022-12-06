@@ -104,7 +104,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       co.vendorExtensions.put("pathSegments", pathSegments);
       co.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
-      String requestBody = getRequestBody(co);
+      Object requestBody = getRequestBody(co);
       if(requestBody != null) {
         co.vendorExtensions.put("requestBody", getRequestBody(co));
         co.vendorExtensions.put("hasRequestBody", true);
@@ -140,13 +140,21 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return responseBody;
   }
 
-  String getRequestBody(CodegenOperation codegenOperation) {
-    String requestBody = null;
+  Object getRequestBody(CodegenOperation codegenOperation) {
+    Object requestBody = null;
 
     if(codegenOperation.getHasBodyParam()) {
       if(codegenOperation.bodyParam.example != null) {
+        // find in bodyParam example
         requestBody = codegenOperation.bodyParam.example;
+      } else if(codegenOperation.bodyParam.getContent().get("application/json") != null &&
+              codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
+        // find in components/examples
+        String exampleRef = codegenOperation.bodyParam.getContent().get("application/json").getExamples()
+                .values().iterator().next().get$ref();
+        requestBody = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef)).getValue();
       } else if(codegenOperation.bodyParam.getSchema() != null) {
+        // find in schema example
         requestBody = codegenOperation.bodyParam.getSchema().getExample();
       }
     }
