@@ -73,46 +73,46 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
 
     // iterate over the operations to customise operations
-    for(CodegenOperation co : opList) {
-      co.path = doubleCurlyBraces(co.path);
+    for(CodegenOperation codegenOperation : opList) {
+      codegenOperation.path = doubleCurlyBraces(codegenOperation.path);
 
       // request headers
-      if(co.produces != null && co.produces.get(0) != null) {
+      if(codegenOperation.produces != null && codegenOperation.produces.get(0) != null) {
         // produces mediaType as `Accept` header (use first mediaType only)
-        String mediaType = co.produces.get(0).get("mediaType");
+        String mediaType = codegenOperation.produces.get(0).get("mediaType");
         CodegenParameter acceptHeader = new CodegenParameter();
         acceptHeader.paramName = "Accept";
         CodegenProperty schema = new CodegenProperty();
         schema.defaultValue = mediaType;
         acceptHeader.setSchema(schema);
-        co.headerParams.add(0, acceptHeader);
+        codegenOperation.headerParams.add(0, acceptHeader);
       }
 
-      if(co.consumes != null && co.consumes.get(0) != null) {
+      if(codegenOperation.consumes != null && codegenOperation.consumes.get(0) != null) {
         // consumes mediaType as `Content-Type` header (use first mediaType only)
-        String mediaType = co.consumes.get(0).get("mediaType");
+        String mediaType = codegenOperation.consumes.get(0).get("mediaType");
         CodegenParameter contentTypeHeader = new CodegenParameter();
         contentTypeHeader.paramName = "Content-Type";
         CodegenProperty schema = new CodegenProperty();
         schema.defaultValue = mediaType;
         contentTypeHeader.setSchema(schema);
-        co.headerParams.add(0, contentTypeHeader);
+        codegenOperation.headerParams.add(0, contentTypeHeader);
       }
 
       // build pathSegments
-      String[] pathSegments = co.path.substring(1).split("/");
-      co.vendorExtensions.put("pathSegments", pathSegments);
-      co.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
+      String[] pathSegments = codegenOperation.path.substring(1).split("/");
+      codegenOperation.vendorExtensions.put("pathSegments", pathSegments);
+      codegenOperation.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
-      Object requestBody = getRequestBody(co);
+      Object requestBody = getRequestBody(codegenOperation);
       if(requestBody != null) {
-        co.vendorExtensions.put("requestBody", getRequestBody(co));
-        co.vendorExtensions.put("hasRequestBody", true);
+        codegenOperation.vendorExtensions.put("requestBody", getRequestBody(codegenOperation));
+        codegenOperation.vendorExtensions.put("hasRequestBody", true);
       } else {
-        co.vendorExtensions.put("hasRequestBody", false);
+        codegenOperation.vendorExtensions.put("hasRequestBody", false);
       }
 
-      for(CodegenResponse codegenResponse : co.responses) {
+      for(CodegenResponse codegenResponse : codegenOperation.responses) {
         Object responseBody = getResponseBody(codegenResponse);
 
         if(responseBody != null) {
