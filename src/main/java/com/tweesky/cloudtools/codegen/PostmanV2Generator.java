@@ -21,6 +21,11 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   // source folder where to write the files
   protected String sourceFolder = "src";
   protected String apiVersion = "1.0.0";
+  // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
+  public static final String FOLDER_STRATEGY = "FOLDER_STRATEGY";
+  public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Paths";
+
+  protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE;
 
   Set<PostmanVariable> variables = new HashSet<>();
 
