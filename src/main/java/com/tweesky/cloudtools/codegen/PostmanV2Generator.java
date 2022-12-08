@@ -188,7 +188,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       // find in components/examples
       String exampleRef = codegenResponse.getContent().get("application/json").getExamples()
               .values().iterator().next().get$ref();
-      responseBody = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef)).getValue();
+      if(exampleRef != null) {
+        responseBody = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef)).getValue();
+      }
     } else if(codegenResponse.getContent() != null) {
       // find in context examples
       Map<String, Example> maxExamples = codegenResponse.getContent().get("application/json").getExamples();
