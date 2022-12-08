@@ -1,101 +1,96 @@
-		{
-			"name": "{{path}}",
-			"item": [
-				{
-					"name": "{{summary}}",
-					"request": {
-						"method": "{{httpMethod}}",
-						"header": [
-						{{#headerParams}}
+    {
+        "name": "{{summary}}",
+        "request": {
+            "method": "{{httpMethod}}",
+            "header": [
+            {{#headerParams}}
+                {
+                    "key": "{{paramName}}",
+                    "value": "{{schema.defaultValue}}"
+                }{{^-last}},{{/-last}}
+            {{/headerParams}}
+            ],{{#vendorExtensions.hasRequestBody}}
+            "body": {
+                "mode": "raw",
+                {{! use first example }}
+                "raw": {{{vendorExtensions.requestBody}}},
+                "options": {
+                    "raw": {
+                        "language": "json"
+                    }
+                }
+            },{{/vendorExtensions.hasRequestBody}}
+            "url": {
+                "raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
+                "host": [
+                    "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
+                ],
+                "path": [
+                    {{#vendorExtensions.pathSegments}}
+                    "{{.}}"{{^-last}},{{/-last}}
+                    {{/vendorExtensions.pathSegments}}
+                ],
+                "variable": [
+                    {{#pathParams}}
+                    {
+                        "key": "{{paramName}}",
+                        "value": "",
+                        "description": "{{description}}"
+                    }{{^-last}},{{/-last}}
+                {{/pathParams}}
+                ],
+                "query": [
+                    {{#queryParams}}
+                    {
+                        "key": "{{paramName}}",
+                        "value": "{{example}}"
+                    }{{^-last}},{{/-last}}
+                    {{/queryParams}}
+                ]
+            },
+            "description": "{{notes}}"
+        },
+        "response": [
+            {{#responses}}
+            {
+                "name": "{{message}}",
+                "originalRequest": {
+                    "method": "{{httpMethod}}",
+                    "header": [],
+                    "url": {
+                        "raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
+                        "host": [
+                            "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
+                        ],
+                        "path": [
+                            {{#vendorExtensions.pathSegments}}
+                            "{{.}}"{{^-last}},{{/-last}}
+                            {{/vendorExtensions.pathSegments}}
+                        ],
+                        "variable": [
+                            {{#pathParams}}
                             {
                                 "key": "{{paramName}}",
-                                "value": "{{schema.defaultValue}}"
+                                "value": "",
+                                "description": "{{description}}"
                             }{{^-last}},{{/-last}}
-                        {{/headerParams}}
-						],{{#vendorExtensions.hasRequestBody}}
-						"body": {
-                            "mode": "raw",
-                            {{! use first example }}
-                            "raw": {{{vendorExtensions.requestBody}}},
-                            "options": {
-                                "raw": {
-                                    "language": "json"
-                                }
-                            }
-                        },{{/vendorExtensions.hasRequestBody}}
-						"url": {
-							"raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
-							"host": [
-								"{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
-							],
-							"path": [
-							    {{#vendorExtensions.pathSegments}}
-							    "{{.}}"{{^-last}},{{/-last}}
-							    {{/vendorExtensions.pathSegments}}
-							],
-                            "variable": [
-                                {{#pathParams}}
-                                {
-                                    "key": "{{paramName}}",
-                                    "value": "",
-                                    "description": "{{description}}"
-                                }{{^-last}},{{/-last}}
-                            {{/pathParams}}
-                            ],
-							"query": [
-							    {{#queryParams}}
-								{
-									"key": "{{paramName}}",
-									"value": "{{example}}"
-								}{{^-last}},{{/-last}}
-							    {{/queryParams}}
-							]
-						},
-						"description": "{{notes}}"
-					},
-					"response": [
-					    {{#responses}}
-						{
-							"name": "{{message}}",
-							"originalRequest": {
-								"method": "{{httpMethod}}",
-								"header": [],
-								"url": {
-									"raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
-									"host": [
-										"{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
-									],
-									"path": [
-									    {{#vendorExtensions.pathSegments}}
-                                        "{{.}}"{{^-last}},{{/-last}}
-                                        {{/vendorExtensions.pathSegments}}
-									],
-									"variable": [
-									    {{#pathParams}}
-                                        {
-                                            "key": "{{paramName}}",
-                                            "value": "",
-                                            "description": "{{description}}"
-                                        }{{^-last}},{{/-last}}
-                                    {{/pathParams}}
-									]
-								}
-							},
-							"code": {{code}},
-							"_postman_previewlanguage": "json",
-							"header": [
-							    {{#headers}}
-								{
-									"key": "{{name}}",
-									"value": "{{schema.defaultValue}}"
-								}{{^-last}},{{/-last}}
-							    {{/headers}}
-							],
-							"cookie": [],
-                            "body": {{#vendorExtensions.hasResponseBody}}{{{vendorExtensions.responseBody}}}{{/vendorExtensions.hasResponseBody}}{{^vendorExtensions.hasResponseBody}}""{{/vendorExtensions.hasResponseBody}}
-						}{{^-last}},{{/-last}}
-						{{/responses}}
-					]
-				}
-			]
-		}
+                        {{/pathParams}}
+                        ]
+                    }
+                },
+                "code": {{code}},
+                "_postman_previewlanguage": "json",
+                "header": [
+                    {{#headers}}
+                    {
+                        "key": "{{name}}",
+                        "value": "{{schema.defaultValue}}"
+                    }{{^-last}},{{/-last}}
+                    {{/headers}}
+                ],
+                "cookie": [],
+                "body": {{#vendorExtensions.hasResponseBody}}{{{vendorExtensions.responseBody}}}{{/vendorExtensions.hasResponseBody}}{{^vendorExtensions.hasResponseBody}}""{{/vendorExtensions.hasResponseBody}}
+            }{{^-last}},{{/-last}}
+            {{/responses}}
+        ]
+    }

@@ -5,15 +5,19 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-	{{#apiInfo}}
-	{{#apis}}
-	{{#operations}}
-	{{#operation}}
-	{{>item}}{{^-last}},{{/-last}}
-    {{/operation}}{{^-last}},{{/-last}}
-    {{/operations}}
-    {{/apis}}
-    {{/apiInfo}}
+	{{#codegenOperationsByTag}}
+	{{#entrySet}}
+	        {
+	            "name": "{{key}}",
+	            "item": [
+	            {{#value}}{{>item}}{{^-last}},{{/-last}}{{/value}}
+	            ]
+	        }{{^-last}},{{/-last}}
+	{{/entrySet}}
+    {{/codegenOperationsByTag}}
+	{{#codegenOperationsList}}
+        {{>item}}{{^-last}},{{/-last}}
+	{{/codegenOperationsList}}
     ],
 	"variable": [{{#servers}}{{#-first}}
 		{
