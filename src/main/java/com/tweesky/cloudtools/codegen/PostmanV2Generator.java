@@ -31,6 +31,11 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   protected Map<String, Object> additionalProperties = new HashMap<>();
 
+  // operations grouped by tag
+  protected Map<String, List<CodegenOperation>> codegenOperationsByTag = new HashMap<>();
+  // list of operations
+  protected List<CodegenOperation> codegenOperationsList = new ArrayList<>();
+
   /**
    * Configures the type of generator.
    *
@@ -64,7 +69,19 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   @Override
   public void processOpts() {
     super.processOpts();
+
+    if(additionalProperties.containsKey(FOLDER_STRATEGY)) {
+      folderStrategy = additionalProperties.get(FOLDER_STRATEGY).toString();
+    }
+
     super.vendorExtensions().put("variables", variables);
+
+    if(folderStrategy.equalsIgnoreCase("tags")) {
+      this.additionalProperties().put("codegenOperationsByTag", codegenOperationsByTag);
+    } else {
+      this.additionalProperties().put("codegenOperationsList", codegenOperationsList);
+    }
+
   }
   /**
    * Provides an opportunity to inspect and modify operation data before the code is generated.
@@ -127,9 +144,40 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
           codegenResponse.vendorExtensions.put("hasResponseBody", false);
         }
       }
+
+      if(folderStrategy.equalsIgnoreCase("tags")) {
+        addToMap(codegenOperation);
+      } else {
+        addToList(codegenOperation);
+      }
+
     }
 
     return results;
+  }
+
+  void addToMap(CodegenOperation codegenOperation){
+
+    String key = null;
+    if(codegenOperation.tags == null || codegenOperation.tags.isEmpty()) {
+      key = "default";
+    } else {
+      key = codegenOperation.tags.get(0).getName();
+    }
+
+    List<CodegenOperation> list = codegenOperationsByTag.get(key);
+
+    if(list == null) {
+      list = new ArrayList<>();
+    }
+    list.add(codegenOperation);
+
+    codegenOperationsByTag.put(key, list);
+
+  }
+
+  void addToList(CodegenOperation codegenOperation) {
+    codegenOperationsList.add(codegenOperation);
   }
 
   Object getResponseBody(CodegenResponse codegenResponse) {
@@ -186,6 +234,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   public PostmanV2Generator() {
     super();
+
+    cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
+
 
     // set the output folder here
     outputFolder = "generated-code/postman-v2";
