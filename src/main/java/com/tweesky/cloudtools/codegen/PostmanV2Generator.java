@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -231,7 +230,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
    * @return A string value for the help message
    */
   public String getHelp() {
-    return "Generates a postman-v2 client library.";
+    return "Generates a postman-v2 file";
   }
 
   public PostmanV2Generator() {
@@ -285,23 +284,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   @Override
   public String escapeReservedWord(String name) {
     return "_" + name;  // add an underscore to the name
-  }
-
-  /**
-   * Location to write model files.  You can use the modelPackage() as defined when the class is
-   * instantiated
-   */
-  public String modelFileFolder() {
-    return outputFolder + "/" + sourceFolder + "/" + modelPackage().replace('.', File.separatorChar);
-  }
-
-  /**
-   * Location to write api files.  You can use the apiPackage() as defined when the class is
-   * instantiated
-   */
-  @Override
-  public String apiFileFolder() {
-    return outputFolder + "/" + sourceFolder + "/" + apiPackage().replace('.', File.separatorChar);
   }
 
   /**
