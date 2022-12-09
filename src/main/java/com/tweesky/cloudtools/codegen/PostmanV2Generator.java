@@ -55,6 +55,48 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return "postman-v2";
   }
 
+  public PostmanV2Generator() {
+    super();
+
+    cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
+
+
+    // set the output folder here
+    outputFolder = "generated-code/postman-v2";
+
+    /**
+     * Template Location.  This is the location which templates will be read from.  The generator
+     * will use the resource stream to attempt to read the templates.
+     */
+    templateDir = "postman-v2";
+
+    /**
+     * Api Package.  Optional, if needed, this can be used in templates
+     */
+    apiPackage = "org.openapitools.api";
+
+    /**
+     * Model Package.  Optional, if needed, this can be used in templates
+     */
+    modelPackage = "org.openapitools.model";
+
+    /**
+     * Additional Properties.  These values can be passed to the templates and
+     * are available in models, apis, and supporting files
+     */
+    additionalProperties.put("apiVersion", apiVersion);
+
+    /**
+     * Supporting Files.  You can write single files for the generator with the
+     * entire object tree available.  If the input file has a suffix of `.mustache
+     * it will be processed by the template engine.  Otherwise, it will be copied
+     */
+    supportingFiles.add(
+            new SupportingFile("postman.mustache", "", "postman.json")
+    );
+
+  }
+
   @Override
   public void postProcessParameter(CodegenParameter parameter) {
     if(parameter.isPathParam) {
@@ -231,48 +273,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
    */
   public String getHelp() {
     return "Generates a postman-v2 file";
-  }
-
-  public PostmanV2Generator() {
-    super();
-
-    cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
-
-
-    // set the output folder here
-    outputFolder = "generated-code/postman-v2";
-
-    /**
-     * Template Location.  This is the location which templates will be read from.  The generator
-     * will use the resource stream to attempt to read the templates.
-     */
-    templateDir = "postman-v2";
-
-    /**
-     * Api Package.  Optional, if needed, this can be used in templates
-     */
-    apiPackage = "org.openapitools.api";
-
-    /**
-     * Model Package.  Optional, if needed, this can be used in templates
-     */
-    modelPackage = "org.openapitools.model";
-
-    /**
-     * Additional Properties.  These values can be passed to the templates and
-     * are available in models, apis, and supporting files
-     */
-    additionalProperties.put("apiVersion", apiVersion);
-
-    /**
-     * Supporting Files.  You can write single files for the generator with the
-     * entire object tree available.  If the input file has a suffix of `.mustache
-     * it will be processed by the template engine.  Otherwise, it will be copied
-     */
-    supportingFiles.add(
-            new SupportingFile("postman.mustache", "", "postman.json")
-    );
-
   }
 
   /**
