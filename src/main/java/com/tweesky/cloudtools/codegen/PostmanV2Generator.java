@@ -69,8 +69,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public void processOpts() {
     super.processOpts();
 
-    if(additionalProperties.containsKey(FOLDER_STRATEGY)) {
-      folderStrategy = additionalProperties.get(FOLDER_STRATEGY).toString();
+    if(additionalProperties().containsKey(FOLDER_STRATEGY)) {
+      folderStrategy = additionalProperties().get(FOLDER_STRATEGY).toString();
     }
 
     super.vendorExtensions().put("variables", variables);
