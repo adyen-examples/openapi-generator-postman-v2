@@ -60,7 +60,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     super();
 
     cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
-    cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variable for path parameters"));
+    cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
 
     // set the output folder here
     outputFolder = "generated-code/postman-v2";
