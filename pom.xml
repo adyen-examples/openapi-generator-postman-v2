@@ -6,6 +6,21 @@
     <packaging>jar</packaging>
     <name>postman-v2-openapi-generator</name>
     <version>1.0.0</version>
+
+    <repositories>
+        <repository>
+            <id>oss</id>
+            <name>oss sonatype snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
