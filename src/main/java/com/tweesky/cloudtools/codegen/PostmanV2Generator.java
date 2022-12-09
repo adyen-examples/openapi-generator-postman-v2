@@ -23,11 +23,13 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
   public static final String FOLDER_STRATEGY = "folderStrategy";
   public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Paths";
+  public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
+  public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;
 
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE;
+  protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE;
 
   Set<PostmanVariable> variables = new HashSet<>();
-
 
   // operations grouped by tag
   protected Map<String, List<CodegenOperation>> codegenOperationsByTag = new HashMap<>();
@@ -58,7 +60,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     super();
 
     cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
-
+    cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variable for path parameters"));
 
     // set the output folder here
     outputFolder = "generated-code/postman-v2";
@@ -98,7 +100,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   @Override
   public void postProcessParameter(CodegenParameter parameter) {
-    if(parameter.isPathParam) {
+    if(pathParamsAsVariables && parameter.isPathParam) {
       variables.add(new PostmanVariable()
               .addName(parameter.paramName)
               .addType(parameter.dataType)
@@ -112,6 +114,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     if(additionalProperties().containsKey(FOLDER_STRATEGY)) {
       folderStrategy = additionalProperties().get(FOLDER_STRATEGY).toString();
+    }
+
+    if (additionalProperties.containsKey(PATH_PARAMS_AS_VARIABLES)) {
+      pathParamsAsVariables = Boolean.parseBoolean(additionalProperties.get(PATH_PARAMS_AS_VARIABLES).toString());
     }
 
     super.vendorExtensions().put("variables", variables);
