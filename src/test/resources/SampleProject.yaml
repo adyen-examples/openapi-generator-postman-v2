@@ -37,11 +37,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+                example:
+                  id: schema-example
+                  firstName: Alice
+                  lastName: Smith333
+                  email: alice.smith@gmail.com
+                  dateOfBirth: '1997-10-31'
+                  emailVerified: true
+                  signUpDate: '2019-08-24'
               examples:
                 Get User Alice Smith:
                   value:
                     id: 142
                     firstName: Alice
+                    lastName: Smith
+                    email: alice.smith@gmail.com
+                    dateOfBirth: '1997-10-31'
+                    emailVerified: true
+                    signUpDate: '2019-08-24'
+                Get User Phil Smith:
+                  value:
+                    id: 143
+                    firstName: Phil
                     lastName: Smith
                     email: alice.smith@gmail.com
                     dateOfBirth: '1997-10-31'
@@ -79,7 +96,7 @@ paths:
     get:
       summary: Get User Info by User ID
       tags:
-        - basic
+        - advanced
       responses:
         '200':
           description: User Found
@@ -271,3 +288,5 @@ components:
 tags:
   - name: basic
     description: Basic tag
+  - name: advanced
+    description: Advanced tag
