@@ -51,7 +51,7 @@ public class PostmanV2GeneratorTest {
   @Test
   public void testBasicGeneration() throws IOException {
 
-    File output = Files.createTempDirectory("test").toFile();
+    File output = Files.createTempDirectory("postmantest_").toFile();
     output.deleteOnExit();
 
     final CodegenConfigurator configurator = new CodegenConfigurator()
