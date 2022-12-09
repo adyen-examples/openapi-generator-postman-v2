@@ -47,13 +47,6 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  public void testSupportingFiles() throws Exception {
-    final PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
-
-    Assert.assertEquals(1, postmanV2Generator.supportingFiles().size());
-  }
-
-  @Test
   public void testBasicGeneration() throws IOException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
