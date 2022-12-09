@@ -28,7 +28,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   Set<PostmanVariable> variables = new HashSet<>();
 
-  protected Map<String, Object> additionalProperties = new HashMap<>();
 
   // operations grouped by tag
   protected Map<String, List<CodegenOperation>> codegenOperationsByTag = new HashMap<>();
