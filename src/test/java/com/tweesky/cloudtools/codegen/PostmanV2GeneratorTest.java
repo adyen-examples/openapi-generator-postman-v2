@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
-import org.openapitools.codegen.languages.GoClientCodegen;
 
 import java.io.File;
 import java.io.FileReader;
