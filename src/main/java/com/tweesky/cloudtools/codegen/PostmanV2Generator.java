@@ -25,9 +25,13 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Paths";
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;
+  public static final String POSTMAN_FILE = "postmanFile";
+  public static final String POSTMAN_FILE_DEFAULT_VALUE = "postman.json";
 
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE;
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE;
+
+  protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
 
   Set<PostmanVariable> variables = new HashSet<>();
 
@@ -61,6 +65,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
     cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
+    cliOptions.add(CliOption.newString(POSTMAN_FILE, "name of the generated Postman file"));
 
     /**
      * Template Location.  This is the location which templates will be read from.  The generator
@@ -83,15 +88,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
      * are available in models, apis, and supporting files
      */
     additionalProperties.put("apiVersion", apiVersion);
-
-    /**
-     * Supporting Files.  You can write single files for the generator with the
-     * entire object tree available.  If the input file has a suffix of `.mustache
-     * it will be processed by the template engine.  Otherwise, it will be copied
-     */
-    supportingFiles.add(
-            new SupportingFile("postman.mustache", "", "postman.json")
-    );
 
   }
 
@@ -116,6 +112,19 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     if (additionalProperties.containsKey(PATH_PARAMS_AS_VARIABLES)) {
       pathParamsAsVariables = Boolean.parseBoolean(additionalProperties.get(PATH_PARAMS_AS_VARIABLES).toString());
     }
+
+    if(additionalProperties.containsKey(POSTMAN_FILE)) {
+      postmanFile = additionalProperties.get(POSTMAN_FILE).toString();
+    }
+
+    /**
+     * Supporting Files.  You can write single files for the generator with the
+     * entire object tree available.  If the input file has a suffix of `.mustache
+     * it will be processed by the template engine.  Otherwise, it will be copied
+     */
+    supportingFiles.add(
+            new SupportingFile("postman.mustache", "", postmanFile)
+    );
 
     super.vendorExtensions().put("variables", variables);
 
