@@ -77,6 +77,28 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
+  public void testBasicGenerationJson() throws IOException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/BasicJson.json")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+    Path docFile = Paths.get(output + "/postman.json");
+    TestUtils.assertFileContains(docFile, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
+  }
+  @Test
   public void testVariables() throws IOException, ParseException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
