@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
+import org.openapitools.codegen.languages.GoClientCodegen;
 
 import java.io.File;
 import java.io.FileReader;
@@ -16,7 +17,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -77,6 +80,58 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
+  public void testVariables() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+
+    JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
+    // verify json has variables
+    assertTrue(jsonObject.get("variable") instanceof JSONArray);
+    assertEquals(2, ((JSONArray) jsonObject.get("variable")).size());
+  }
+
+  @Test
+  public void testGenerateWithoutPathParamsVariables() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .addAdditionalProperty(PostmanV2Generator.PATH_PARAMS_AS_VARIABLES, false)
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+
+    JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
+    // verify json has single variable (baseUrl)
+    assertTrue(jsonObject.get("variable") instanceof JSONArray);
+    assertEquals(1, ((JSONArray) jsonObject.get("variable")).size());
+  }
+
+  @Test
   public void testComponentExamples() throws IOException, ParseException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
@@ -98,11 +153,6 @@ public class PostmanV2GeneratorTest {
     Path docFile = Paths.get(output + "/postman.json");
     // verify response body comes from components/examples
     TestUtils.assertFileContains(docFile, "\"body\": {\"id\":777,\"firstName\":\"Alotta\",\"lastName\":\"Rotta\",\"email\":\"alotta.rotta@gmail.com\",");
-
-    JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
-    // verify json has variable[]
-    assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(2, ((JSONArray) jsonObject.get("variable")).size());
   }
 
   @Test
