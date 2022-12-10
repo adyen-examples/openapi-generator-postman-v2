@@ -183,6 +183,13 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
+  public void doubleCurlyBracesNoChanges() {
+    String str = "/api/{{var}}/archive";
+
+    assertEquals("/api/{{var}}/archive", new PostmanV2Generator().doubleCurlyBraces(str));
+  }
+
+  @Test
   public void extractExampleByName() {
     String str = "#/components/examples/get-user-basic";
 

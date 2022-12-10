@@ -349,7 +349,13 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   }
 
   String doubleCurlyBraces(String str) {
-    return str.replace("{", "{{").replace("}", "}}");
+
+    // remove doublebraces first
+    String s = str.replace("{{", "{").replace("}}", "}");
+    // change all singlebraces to doublebraces
+    s = s.replace("{", "{{").replace("}", "}}");
+
+    return s;
 
   }
 
