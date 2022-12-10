@@ -2,7 +2,6 @@ package com.tweesky.cloudtools.codegen;
 
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.examples.Example;
-import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
@@ -163,7 +162,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     // iterate over the operations to customise operations
     for(CodegenOperation codegenOperation : opList) {
-      codegenOperation.path = doubleCurlyBraces(codegenOperation.path);
+      if(pathParamsAsVariables) {
+        codegenOperation.path = doubleCurlyBraces(codegenOperation.path);
+      }
 
       // request headers
       if(codegenOperation.produces != null && codegenOperation.produces.get(0) != null) {
