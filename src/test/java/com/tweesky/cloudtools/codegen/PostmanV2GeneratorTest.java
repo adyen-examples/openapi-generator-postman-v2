@@ -139,9 +139,9 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
 
     JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
-    // verify json has single variable (baseUrl)
+    // verify json has only Server variables (baseUrl, etc..)
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(1, ((JSONArray) jsonObject.get("variable")).size());
+    assertEquals(3, ((JSONArray) jsonObject.get("variable")).size());
   }
 
   @Test
