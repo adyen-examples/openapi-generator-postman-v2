@@ -15,10 +15,36 @@
   },
   "servers" : [ {
     "description" : "dev server",
-    "url" : "http://localhost:5001"
-  }, {
-    "description" : "test server",
-    "url" : "http://localhost:5001"
+    "url" : "http://localhost:{port}/{version}",
+    "variables": {
+      "version": {
+        "default": "v1",
+        "description": "version of the API"
+      },
+      "port": {
+        "enum": [
+          "5000",
+          "8080"
+        ],
+        "default": "5000"
+      }
+    }
+    }, {
+      "description" : "test server",
+      "url" : "http://localhost:{port}/{version}",
+      "variables": {
+        "version": {
+          "default": "v1",
+          "description": "version of the API"
+        },
+        "port": {
+          "enum": [
+            "5000",
+            "8080"
+          ],
+          "default": "5000"
+        }
+      }
   } ],
   "tags" : [ {
     "description" : "Basic tag",

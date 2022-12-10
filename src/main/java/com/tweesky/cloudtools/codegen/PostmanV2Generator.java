@@ -2,6 +2,8 @@ package com.tweesky.cloudtools.codegen;
 
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.servers.ServerVariable;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
 import org.slf4j.Logger;
@@ -99,6 +101,17 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
               .addType(parameter.dataType)
               .addExample(parameter.example));
     }
+  }
+
+  @Override
+  public List<CodegenServerVariable> fromServerVariables(Map<String, ServerVariable> variables) {
+
+    variables.entrySet().stream().forEach(serverVariableEntry -> this.variables.add(new PostmanVariable()
+            .addName(serverVariableEntry.getValue().getDescription())
+            .addType("string")
+            .addExample(serverVariableEntry.getValue().getDefault())));
+
+    return super.fromServerVariables(variables);
   }
 
   @Override

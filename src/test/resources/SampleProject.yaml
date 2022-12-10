@@ -11,8 +11,30 @@ info:
     name: Apache 2.0
     url: 'https://github.com/gcatanese'
 servers:
-  - url: 'http://localhost:5001'
-    description: Beppe Catanese
+  - url: 'http://localhost:{port}/{version}'
+    description: dev server
+    variables:
+      port:
+        description: Port number
+        enum:
+          - '5000'
+          - '8080'
+        default: '5000'
+      version:
+        default: v1
+        description: API version
+  - url: 'http://localhost:{port}/{version}'
+    description: test server
+    variables:
+      port:
+        description: Port number
+        enum:
+          - '5000'
+          - '8080'
+        default: '5000'
+      version:
+        default: v1
+        description: API version
 paths:
   '/users/':
     get:
