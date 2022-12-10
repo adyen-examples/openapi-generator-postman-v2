@@ -106,10 +106,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   @Override
   public List<CodegenServerVariable> fromServerVariables(Map<String, ServerVariable> variables) {
 
-    variables.entrySet().stream().forEach(serverVariableEntry -> this.variables.add(new PostmanVariable()
-            .addName(serverVariableEntry.getKey())
-            .addType("string")
-            .addExample(serverVariableEntry.getValue().getDefault())));
+    if(variables != null){
+      variables.entrySet().stream().forEach(serverVariableEntry -> this.variables.add(new PostmanVariable()
+              .addName(serverVariableEntry.getKey())
+              .addType("string")
+              .addExample(serverVariableEntry.getValue().getDefault())));
+    }
 
     return super.fromServerVariables(variables);
   }
