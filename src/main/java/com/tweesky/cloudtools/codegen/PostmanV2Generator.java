@@ -31,11 +31,11 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String NAMING_REQUESTS = "namingRequests";
   public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
 
-  protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE;
-  protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE;
+  protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE; // values: Paths | Tags
+  protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE; // values: true | false
 
   protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
-  protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE;
+  protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE; // values: Feedback | URL
 
   Set<PostmanVariable> variables = new HashSet<>();
 
@@ -170,8 +170,21 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     // iterate over the operations to customise operations
     for(CodegenOperation codegenOperation : opList) {
+
       if(pathParamsAsVariables) {
         codegenOperation.path = doubleCurlyBraces(codegenOperation.path);
+      }
+
+      if(namingRequests.equalsIgnoreCase("url")) {
+        codegenOperation.summary = codegenOperation.path;
+      } else {
+        if(codegenOperation.summary == null) {
+          if(codegenOperation.operationId == null) {
+            codegenOperation.summary = codegenOperation.path;
+          } else {
+            codegenOperation.summary = codegenOperation.operationId;
+          }
+        }
       }
 
       // request headers

@@ -68,6 +68,10 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileExists(Paths.get(output + "/basic.json"));
     Path docFile = Paths.get(output + "/basic.json");
     TestUtils.assertFileContains(docFile, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
+
+    // verify request name (from summary)
+    TestUtils.assertFileContains(docFile, "\"name\": \"Get User\"");
+
   }
 
   @Test
@@ -167,6 +171,31 @@ public class PostmanV2GeneratorTest {
     // verify response body comes from components/examples
     TestUtils.assertFileContains(docFile, "\"body\": {\"id\":777,\"firstName\":\"Alotta\",\"lastName\":\"Rotta\",\"email\":\"alotta.rotta@gmail.com\",");
   }
+
+  @Test
+  public void testNamingRequestsWithUrl() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .addAdditionalProperty(PostmanV2Generator.NAMING_REQUESTS, "URL")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+    Path docFile = Paths.get(output + "/postman.json");
+    // verify request name (from path)
+    TestUtils.assertFileContains(docFile, "\"name\": \"/users/{{userId}}\"");
+  }
+
 
   @Test
   public void extractVariables() {
