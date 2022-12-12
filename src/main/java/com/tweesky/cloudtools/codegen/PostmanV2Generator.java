@@ -31,11 +31,16 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String NAMING_REQUESTS = "namingRequests";
   public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
 
+  public static final String REQUEST_PARAMETER_GENERATION = "Example ";
+  public static final String REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE = "";
+
+
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE; // values: Paths | Tags
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE; // values: true | false
 
   protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
   protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE; // values: Feedback | URL
+  protected String requestParameterGeneration = REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE; // values: Example, Schema
 
   Set<PostmanVariable> variables = new HashSet<>();
 
@@ -71,6 +76,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
     cliOptions.add(CliOption.newString(POSTMAN_FILE, "name of the generated Postman file"));
     cliOptions.add(CliOption.newString(NAMING_REQUESTS, "how the requests inside the generated collection will be named (Fallback or URL)"));
+    cliOptions.add(CliOption.newString(REQUEST_PARAMETER_GENERATION, "whether to generate the request parameters based on the schema or the examples"));
 
     /**
      * Template Location.  This is the location which templates will be read from.  The generator
@@ -137,6 +143,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     if(additionalProperties.containsKey(NAMING_REQUESTS)) {
       namingRequests = additionalProperties().get(NAMING_REQUESTS).toString();
+    }
+
+    if(additionalProperties().containsKey(REQUEST_PARAMETER_GENERATION)) {
+      requestParameterGeneration = additionalProperties().get(REQUEST_PARAMETER_GENERATION).toString();
     }
 
     /**
@@ -295,22 +305,51 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     Object requestBody = null;
 
     if(codegenOperation.getHasBodyParam()) {
-      if(codegenOperation.bodyParam.example != null) {
-        // find in bodyParam example
-        requestBody = codegenOperation.bodyParam.example;
-      } else if(codegenOperation.bodyParam.getContent().get("application/json") != null &&
-              codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
-        // find in components/examples
-        String exampleRef = codegenOperation.bodyParam.getContent().get("application/json").getExamples()
-                .values().iterator().next().get$ref();
-        requestBody = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef)).getValue();
-      } else if(codegenOperation.bodyParam.getSchema() != null) {
-        // find in schema example
-        requestBody = codegenOperation.bodyParam.getSchema().getExample();
+      if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
+        // get from schema
+        requestBody = getExampleFromSchema(codegenOperation.bodyParam);
+      } else {
+        // get from examples
+        if (codegenOperation.bodyParam.example != null) {
+          // find in bodyParam example
+          requestBody = codegenOperation.bodyParam.example;
+        } else if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
+                codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
+          // find in components/examples
+          String exampleRef = codegenOperation.bodyParam.getContent().get("application/json").getExamples()
+                  .values().iterator().next().get$ref();
+          requestBody = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef)).getValue();
+        } else if (codegenOperation.bodyParam.getSchema() != null) {
+          // find in schema example
+          requestBody = codegenOperation.bodyParam.getSchema().getExample();
+        }
       }
     }
 
     return requestBody;
+  }
+
+  String getExampleFromSchema(CodegenParameter codegenParameter) {
+
+    String ret = "\"{";
+    for (CodegenProperty codegenProperty : codegenParameter.vars) {
+      ret = ret + codegenProperty.baseName + " = " + "<" + getPostmanType(codegenProperty) + ">, ";
+    }
+    ret = ret.substring(0, ret.length() - 2);
+
+    ret = ret + "}\"";
+
+    return ret;
+  }
+
+  String getPostmanType(CodegenProperty codegenProperty) {
+    if(codegenProperty.isNumeric) {
+      return "number";
+    } else if(codegenProperty.isDate) {
+      return "date";
+    } else {
+      return "string";
+    }
   }
 
   /**

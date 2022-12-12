@@ -7,6 +7,8 @@ import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openapitools.codegen.ClientOptInput;
+import org.openapitools.codegen.CodegenParameter;
+import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
 
@@ -196,6 +198,29 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileContains(docFile, "\"name\": \"/users/{{userId}}\"");
   }
 
+  @Test
+  public void testExampleFromSchema() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .addAdditionalProperty(PostmanV2Generator.REQUEST_PARAMETER_GENERATION, "Schema")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+    Path docFile = Paths.get(output + "/postman.json");
+    // verify request name (from path)
+    TestUtils.assertFileContains(docFile, "{firstName = <string>, lastName = <string>, email = <string>, dateOfBirth = <date>}\"");
+  }
 
   @Test
   public void extractVariables() {
@@ -224,5 +249,43 @@ public class PostmanV2GeneratorTest {
 
     assertEquals("get-user-basic", new PostmanV2Generator().extractExampleByName(str));
   }
+
+  @Test
+  public void getPostmanTypeNumber() {
+    CodegenProperty codegenProperty = new CodegenProperty();
+    codegenProperty.isNumeric = true;
+
+    assertEquals("number", new PostmanV2Generator().getPostmanType(codegenProperty));
+  }
+
+  @Test
+  public void getPostmanTypeDate() {
+    CodegenProperty codegenProperty = new CodegenProperty();
+    codegenProperty.isDate = true;
+
+    assertEquals("date", new PostmanV2Generator().getPostmanType(codegenProperty));
+  }
+
+  @Test
+  public void getPostmanTypeString() {
+    CodegenProperty codegenProperty = new CodegenProperty();
+    codegenProperty.isString = true;
+
+    assertEquals("string", new PostmanV2Generator().getPostmanType(codegenProperty));
+  }
+
+  @Test
+  public void getExampleFromSchema() {
+    final String EXPECTED = "\"{firstname = <string>, lastname = <string>, age = <number>, birthDate = <date>}\"";
+
+    CodegenParameter codegenParameter = new CodegenParameter();
+    codegenParameter.vars.add(new CodegenProperty() {{baseName = "firstname"; isString = true;}});
+    codegenParameter.vars.add(new CodegenProperty() {{baseName = "lastname"; isString = true;}});
+    codegenParameter.vars.add(new CodegenProperty() {{baseName = "age"; isNumeric = true;}});
+    codegenParameter.vars.add(new CodegenProperty() {{baseName = "birthDate"; isDate = true;}});
+
+    assertEquals(EXPECTED, new PostmanV2Generator().getExampleFromSchema(codegenParameter));
+  }
+
 
 }
