@@ -54,4 +54,4 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 |folderStrategy| whether to create folders according to the spec’s paths or tags  | Paths, Tags   | Paths        |
 |pathParamsAsVariables| boolean, whether to create Postman variables for path parameters | true, false   | true         |
 |postmanFile| name of the generated Postman file  |               | postman.json |
-|namingRequests| how the requests inside the generated collection will be named. If “Fallback” is selected, the request will be named after one of the following schema values: description, operationid, url.  | Feedback, URL | Feedback     |
+|namingRequests| how the requests inside the generated collection will be named. If “Fallback” is selected, the request will be named after one of the following schema values: description, operationid, url  | Feedback, URL | Feedback     |
