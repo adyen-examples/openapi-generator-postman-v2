@@ -34,7 +34,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String REQUEST_PARAMETER_GENERATION = "Example ";
   public static final String REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE = "";
 
-
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE; // values: Paths | Tags
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE; // values: true | false
 
