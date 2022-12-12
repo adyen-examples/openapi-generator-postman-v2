@@ -94,9 +94,9 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
-    Path docFile = Paths.get(output + "/postman.json");
-    TestUtils.assertFileContains(docFile, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    TestUtils.assertFileContains(path, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
   }
   @Test
   public void testVariables() throws IOException, ParseException {
@@ -168,10 +168,10 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
-    Path docFile = Paths.get(output + "/postman.json");
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
     // verify response body comes from components/examples
-    TestUtils.assertFileContains(docFile, "\"body\": {\"id\":777,\"firstName\":\"Alotta\",\"lastName\":\"Rotta\",\"email\":\"alotta.rotta@gmail.com\",");
+    TestUtils.assertFileContains(path, "\"body\": {\"id\":777,\"firstName\":\"Alotta\",\"lastName\":\"Rotta\",\"email\":\"alotta.rotta@gmail.com\",");
   }
 
   @Test
@@ -192,10 +192,10 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
-    Path docFile = Paths.get(output + "/postman.json");
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
     // verify request name (from path)
-    TestUtils.assertFileContains(docFile, "\"name\": \"/users/{{userId}}\"");
+    TestUtils.assertFileContains(path, "\"name\": \"/users/{{userId}}\"");
   }
 
   @Test
@@ -216,10 +216,10 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
-    Path docFile = Paths.get(output + "/postman.json");
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
     // verify request name (from path)
-    TestUtils.assertFileContains(docFile, "{firstName = <string>, lastName = <string>, email = <string>, dateOfBirth = <date>}\"");
+    TestUtils.assertFileContains(path, "{firstName = <string>, lastName = <string>, email = <string>, dateOfBirth = <date>}\"");
   }
 
   @Test
