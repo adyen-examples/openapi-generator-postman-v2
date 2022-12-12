@@ -67,12 +67,12 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    TestUtils.assertFileExists(Paths.get(output + "/basic.json"));
-    Path docFile = Paths.get(output + "/basic.json");
-    TestUtils.assertFileContains(docFile, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
+    Path path = Paths.get(output + "/basic.json");
+    TestUtils.assertFileExists(path);
+    TestUtils.assertFileContains(path, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
 
     // verify request name (from summary)
-    TestUtils.assertFileContains(docFile, "\"name\": \"Get User\"");
+    TestUtils.assertFileContains(path, "\"name\": \"Get User\"");
 
   }
 
