@@ -28,6 +28,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;
   public static final String POSTMAN_FILE = "postmanFile";
   public static final String POSTMAN_FILE_DEFAULT_VALUE = "postman.json";
+  public static final String NAMING_REQUESTS = "namingRequests";
+  public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
 
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE;
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE;
@@ -67,6 +69,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
     cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
     cliOptions.add(CliOption.newString(POSTMAN_FILE, "name of the generated Postman file"));
+    cliOptions.add(CliOption.newString(NAMING_REQUESTS, "how the requests inside the generated collection will be named (Fallback or URL)"));
 
     /**
      * Template Location.  This is the location which templates will be read from.  The generator
@@ -129,6 +132,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     if(additionalProperties.containsKey(POSTMAN_FILE)) {
       postmanFile = additionalProperties.get(POSTMAN_FILE).toString();
+    }
+
+    if(additionalProperties.containsKey(NAMING_REQUESTS)) {
+      namingRequests = additionalProperties().get(NAMING_REQUESTS).toString();
     }
 
     /**
