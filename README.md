@@ -49,9 +49,10 @@ java -cp target/postman-v2-openapi-generator-1.0.0-SNAPSHOT.jar:/openapi-generat
 ## CONFIG OPTIONS
 These options may be applied as additional-properties (cli) or configOptions (plugins). 
 
-| Option | Description                                                      | Values        | Default      |
-| ------ |------------------------------------------------------------------|---------------|--------------|
-|folderStrategy| whether to create folders according to the spec’s paths or tags  | Paths, Tags   | Paths        |
-|pathParamsAsVariables| boolean, whether to create Postman variables for path parameters | true, false   | true         |
-|postmanFile| name of the generated Postman file  |               | postman.json |
-|namingRequests| how the requests inside the generated collection will be named. If “Fallback” is selected, the request will be named after one of the following schema values: description, operationid, url  | Feedback, URL | Feedback     |
+| Option | Description                                                      | Values          | Default      |
+| ------ |------------------------------------------------------------------|-----------------|--------------|
+|folderStrategy| whether to create folders according to the spec’s paths or tags  | Paths, Tags     | Paths        |
+|pathParamsAsVariables| boolean, whether to create Postman variables for path parameters | true, false     | true         |
+|postmanFile| name of the generated Postman file  |                 | postman.json |
+|namingRequests| how the requests inside the generated collection will be named. If “Fallback” is selected, the request will be named after one of the following schema values: description, operationid, url  | Feedback, URL   | Feedback     |
+|requestParameterGeneration| whether to generate the request parameters based on the schema or the examples  | Example, Schema | Example      |
