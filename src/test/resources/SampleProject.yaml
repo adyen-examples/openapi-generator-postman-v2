@@ -92,7 +92,6 @@ paths:
     parameters:
       - schema:
           type: integer
-          example: 999
         examples:
           a:
             value: a
