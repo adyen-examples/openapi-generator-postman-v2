@@ -313,7 +313,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     if(example.getValue() instanceof ObjectNode) {
       ret = example.getValue().toString();
     } else if(example.getValue() instanceof LinkedHashMap) {
-      ObjectMapper mapper = new ObjectMapper();
+      final ObjectMapper mapper = new ObjectMapper();
       ret = mapper.convertValue(example.getValue(), ObjectNode.class).toString();
     }
 
