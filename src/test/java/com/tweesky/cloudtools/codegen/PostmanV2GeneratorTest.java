@@ -1,5 +1,6 @@
 package com.tweesky.cloudtools.codegen;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -98,6 +99,30 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileExists(path);
     TestUtils.assertFileContains(path, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
   }
+
+  @Test
+  public void testValidatePostmanJson() throws IOException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    final ObjectMapper mapper = new ObjectMapper();
+    mapper.readTree(new FileReader(output + "/postman.json"));
+
+  }
+
   @Test
   public void testVariables() throws IOException, ParseException {
 
