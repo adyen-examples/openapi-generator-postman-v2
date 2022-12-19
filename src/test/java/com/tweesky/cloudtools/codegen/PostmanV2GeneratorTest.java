@@ -284,7 +284,7 @@ public class PostmanV2GeneratorTest {
     codegenParameter.vars.add(new CodegenProperty() {{baseName = "age"; isNumeric = true;}});
     codegenParameter.vars.add(new CodegenProperty() {{baseName = "birthDate"; isDate = true;}});
 
-    assertEquals(EXPECTED, new PostmanV2Generator().getExampleFromSchema(codegenParameter));
+    assertEquals(EXPECTED, new PostmanV2Generator().generateExampleFromSchema(codegenParameter));
   }
 
 
