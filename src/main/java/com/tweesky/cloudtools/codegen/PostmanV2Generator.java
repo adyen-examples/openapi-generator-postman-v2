@@ -1,5 +1,7 @@
 package com.tweesky.cloudtools.codegen;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.servers.ServerVariable;
@@ -287,7 +289,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       String exampleRef = codegenResponse.getContent().get("application/json").getExamples()
               .values().iterator().next().get$ref();
       if(exampleRef != null) {
-        responseBody = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef)).getValue();
+        Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
+        responseBody = getExampleValue(example);
       }
     } else if(codegenResponse.getContent() != null) {
       // find in context examples
@@ -298,6 +301,23 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     }
 
     return responseBody;
+  }
+
+  String getExampleValue(Example example) {
+    String ret = "";
+
+    if(example == null) {
+      return ret;
+    }
+
+    if(example.getValue() instanceof ObjectNode) {
+      ret = example.getValue().toString();
+    } else if(example.getValue() instanceof LinkedHashMap) {
+      ObjectMapper mapper = new ObjectMapper();
+      ret = mapper.convertValue(example.getValue(), ObjectNode.class).toString();
+    }
+
+    return ret;
   }
 
   Object getRequestBody(CodegenOperation codegenOperation) {
