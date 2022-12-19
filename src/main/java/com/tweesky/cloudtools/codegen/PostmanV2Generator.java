@@ -306,7 +306,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     if(codegenOperation.getHasBodyParam()) {
       if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
         // get from schema
-        requestBody = getExampleFromSchema(codegenOperation.bodyParam);
+        requestBody = generateExampleFromSchema(codegenOperation.bodyParam);
       } else {
         // get from examples
         if (codegenOperation.bodyParam.example != null) {
@@ -328,7 +328,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return requestBody;
   }
 
-  String getExampleFromSchema(CodegenParameter codegenParameter) {
+  String generateExampleFromSchema(CodegenParameter codegenParameter) {
 
     String ret = "\"{";
     for (CodegenProperty codegenProperty : codegenParameter.vars) {
