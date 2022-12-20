@@ -154,11 +154,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       requestParameterGeneration = additionalProperties().get(REQUEST_PARAMETER_GENERATION).toString();
     }
 
-    /**
-     * Supporting Files.  You can write single files for the generator with the
-     * entire object tree available.  If the input file has a suffix of `.mustache
-     * it will be processed by the template engine.  Otherwise, it will be copied
-     */
     supportingFiles.add(
             new SupportingFile("postman.mustache", "", postmanFile)
     );
