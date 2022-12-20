@@ -12,8 +12,7 @@
             ],{{#vendorExtensions.hasRequestBody}}
             "body": {
                 "mode": "raw",
-                {{! use first example }}
-                "raw": {{{vendorExtensions.requestBody}}},
+                "raw": "{{{vendorExtensions.requestBody}}}",
                 "options": {
                     "raw": {
                         "language": "json"
@@ -89,7 +88,7 @@
                     {{/headers}}
                 ],
                 "cookie": [],
-                "body": {{#vendorExtensions.hasResponseBody}}{{{vendorExtensions.responseBody}}}{{/vendorExtensions.hasResponseBody}}{{^vendorExtensions.hasResponseBody}}""{{/vendorExtensions.hasResponseBody}}
+                "body": {{#vendorExtensions.hasResponseBody}}"{{{vendorExtensions.responseBody}}}"{{/vendorExtensions.hasResponseBody}}{{^vendorExtensions.hasResponseBody}}""{{/vendorExtensions.hasResponseBody}}
             }{{^-last}},{{/-last}}
             {{/responses}}
         ]
