@@ -19,9 +19,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   private final Logger LOGGER = LoggerFactory.getLogger(PostmanV2Generator.class);
 
-  public static final String JSON_ESCAPE_DOUBLE_QUOTE = "\\\"";
-  public static final String JSON_ESCAPE_NEW_LINE = "\\n";
-
   // source folder where to write the files
   protected String sourceFolder = "src";
   protected String apiVersion = "1.0.0";
