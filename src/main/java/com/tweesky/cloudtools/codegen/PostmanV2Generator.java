@@ -1,7 +1,5 @@
 package com.tweesky.cloudtools.codegen;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.servers.ServerVariable;
@@ -287,34 +285,17 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
               .values().iterator().next().get$ref();
       if(exampleRef != null) {
         Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
-        responseBody = getExampleValue(example);
+        responseBody = new ExampleJsonHelper().getJsonFromExample(example);
       }
     } else if(codegenResponse.getContent() != null) {
       // find in context examples
       Map<String, Example> maxExamples = codegenResponse.getContent().get("application/json").getExamples();
       if(maxExamples != null && maxExamples.values().iterator().hasNext()) {
-        responseBody = getExampleValue(maxExamples.values().iterator().next());
+        responseBody = new ExampleJsonHelper().getJsonFromExample(maxExamples.values().iterator().next());
       }
     }
 
     return responseBody;
-  }
-
-  String getExampleValue(Example example) {
-    String ret = "";
-
-    if(example == null) {
-      return ret;
-    }
-
-    if(example.getValue() instanceof ObjectNode) {
-      ret = convertToJson((ObjectNode)example.getValue());
-    } else if(example.getValue() instanceof LinkedHashMap) {
-      final ObjectMapper mapper = new ObjectMapper();
-      ret = convertToJson((LinkedHashMap)example.getValue());
-    }
-
-    return ret;
   }
 
   String getRequestBody(CodegenOperation codegenOperation) {
@@ -323,124 +304,27 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     if(codegenOperation.getHasBodyParam()) {
       if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
         // get from schema
-        requestBody = generateJsonFromSchema(codegenOperation.bodyParam);
+        requestBody = new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam);
       } else {
         // get from examples
         if (codegenOperation.bodyParam.example != null) {
           // find in bodyParam example
-          requestBody = formatJson(codegenOperation.bodyParam.example);
+          requestBody = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example);
         } else if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
                 codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
           // find in components/examples
           String exampleRef = codegenOperation.bodyParam.getContent().get("application/json").getExamples()
                   .values().iterator().next().get$ref();
           Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
-          requestBody = getExampleValue(example);
+          requestBody = new ExampleJsonHelper().getJsonFromExample(example);
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
-          requestBody = formatJson(codegenOperation.bodyParam.getSchema().getExample());
+          requestBody = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.getSchema().getExample());
         }
       }
     }
 
     return requestBody;
-  }
-
-  // format JSON (string) escaping and formatting
-  String formatJson(String json) {
-    String ret = json;
-
-    ret = ret.replace("{", "{" + JSON_ESCAPE_NEW_LINE + " ");
-    ret = ret.replace("}", JSON_ESCAPE_NEW_LINE + "}");
-    ret = ret.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
-    ret = ret.replace(":", ": ");
-    ret = ret.replace(",", "," + JSON_ESCAPE_NEW_LINE + " ");
-
-    return ret;
-  }
-
-  // convert to JSON (string) escaping and formatting
-  String convertToJson(ObjectNode objectNode) {
-    return formatJson(objectNode.toString());
-  }
-
-  // convert to JSON (string) escaping and formatting
-  String convertToJson(LinkedHashMap<String, Object> linkedHashMap) {
-    String ret = "";
-
-    return traverseMap(linkedHashMap, ret);
-  }
-
-  // traverse recursively
-  private String traverseMap(LinkedHashMap<String, Object> linkedHashMap, String ret) {
-
-    ret = ret + "{" + JSON_ESCAPE_NEW_LINE + " ";
-
-    int numVars = linkedHashMap.entrySet().size();
-    int counter = 1;
-
-    for (Map.Entry<String, Object> mapElement : linkedHashMap.entrySet()) {
-      String key = mapElement.getKey();
-      Object value = mapElement.getValue();
-
-      if(value instanceof String) {
-        ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
-                JSON_ESCAPE_DOUBLE_QUOTE + value + JSON_ESCAPE_DOUBLE_QUOTE;
-      } else if (value instanceof Integer) {
-        ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
-                value;
-      } else if (value instanceof LinkedHashMap) {
-        String in = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": ";
-        ret = traverseMap(((LinkedHashMap<String, Object>) value),  in);
-      } else {
-        LOGGER.warn("Value type unrecognised: " + value.getClass());
-      }
-
-      if(counter < numVars) {
-        // add comma unless last attribute
-        ret = ret + "," + JSON_ESCAPE_NEW_LINE + " ";
-      }
-      counter++;
-    }
-
-    ret = ret + JSON_ESCAPE_NEW_LINE + "}";
-
-    return ret;
-  }
-
-  // generate JSON (string) escaping and formatting
-  String generateJsonFromSchema(CodegenParameter codegenParameter) {
-
-    String ret = "{" + JSON_ESCAPE_NEW_LINE + " ";
-
-    int numVars = codegenParameter.vars.size();
-    int counter = 1;
-
-    for (CodegenProperty codegenProperty : codegenParameter.vars) {
-      ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + codegenProperty.baseName + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
-              JSON_ESCAPE_DOUBLE_QUOTE + "<" + getPostmanType(codegenProperty) + ">" + JSON_ESCAPE_DOUBLE_QUOTE;
-
-      if(counter < numVars) {
-        // add comma unless last attribute
-        ret = ret + "," + JSON_ESCAPE_NEW_LINE + " ";
-      }
-      counter++;
-
-    }
-
-    ret = ret + JSON_ESCAPE_NEW_LINE + "}";
-
-    return ret;
-  }
-
-  String getPostmanType(CodegenProperty codegenProperty) {
-    if(codegenProperty.isNumeric) {
-      return "number";
-    } else if(codegenProperty.isDate) {
-      return "date";
-    } else {
-      return "string";
-    }
   }
 
   /**
