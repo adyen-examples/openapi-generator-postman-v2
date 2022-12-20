@@ -1,6 +1,7 @@
 package com.tweesky.cloudtools.codegen;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -191,12 +193,12 @@ public class PostmanV2GeneratorTest {
     List<File> files = generator.opts(clientOptInput).generate();
 
     System.out.println(files);
-    files.forEach(File::deleteOnExit);
+    //files.forEach(File::deleteOnExit);
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
     // verify response body comes from components/examples
-    TestUtils.assertFileContains(path, "\"body\": {\"id\":777,\"firstName\":\"Alotta\",\"lastName\":\"Rotta\",\"email\":\"alotta.rotta@gmail.com\",");
+    TestUtils.assertFileContains(path, "\"body\": \"{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"Alotta\\\",\\n \\\"lastName\\\": \\\"Rotta\\\",\\n ");
   }
 
   @Test
@@ -239,12 +241,13 @@ public class PostmanV2GeneratorTest {
     List<File> files = generator.opts(configurator.toClientOptInput()).generate();
 
     System.out.println(files);
-    files.forEach(File::deleteOnExit);
+    //files.forEach(File::deleteOnExit);
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
     // verify request name (from path)
-    TestUtils.assertFileContains(path, "{firstName = <string>, lastName = <string>, email = <string>, dateOfBirth = <date>}\"");
+    TestUtils.assertFileContains(path, "{\\n \\\"firstName\\\": \\\"<string>\\\",\\n \\\"lastName\\\": \\\"<string>\\\",\\n \\\"email\\\": \\\"<string>\\\",\\n \\\"dateOfBirth\\\": \\\"<date>\\\"\\n}");
+
   }
 
   @Test
@@ -301,7 +304,7 @@ public class PostmanV2GeneratorTest {
 
   @Test
   public void getExampleFromSchema() {
-    final String EXPECTED = "\"{firstname = <string>, lastname = <string>, age = <number>, birthDate = <date>}\"";
+    final String EXPECTED = "{\\n \\\"firstname\\\": \\\"<string>\\\",\\n \\\"lastname\\\": \\\"<string>\\\",\\n \\\"age\\\": \\\"<number>\\\",\\n \\\"birthDate\\\": \\\"<date>\\\"\\n}";
 
     CodegenParameter codegenParameter = new CodegenParameter();
     codegenParameter.vars.add(new CodegenProperty() {{baseName = "firstname"; isString = true;}});
@@ -309,8 +312,66 @@ public class PostmanV2GeneratorTest {
     codegenParameter.vars.add(new CodegenProperty() {{baseName = "age"; isNumeric = true;}});
     codegenParameter.vars.add(new CodegenProperty() {{baseName = "birthDate"; isDate = true;}});
 
-    assertEquals(EXPECTED, new PostmanV2Generator().generateExampleFromSchema(codegenParameter));
+    assertEquals(EXPECTED, new PostmanV2Generator().generateJsonFromSchema(codegenParameter));
   }
 
+  @Test
+  public void formatJson() {
+
+    final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";
+    final String JSON = "{\"id\":1,\"city\":\"Amsterdam\"}";
+
+    assertEquals(EXPECTED, new PostmanV2Generator().formatJson(JSON));
+
+  }
+
+  @Test
+  public void convertObjectNodeToJson() {
+
+    final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";
+
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode city = mapper.createObjectNode();
+
+    city.put("id", 1);
+    city.put("city", "Amsterdam");
+
+    assertEquals(EXPECTED, new PostmanV2Generator().convertToJson(city));
+
+  }
+
+  @Test
+  public void convertLinkedHashMapToJson() {
+
+    final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";
+
+    LinkedHashMap<String, Object> city = new LinkedHashMap<>();
+    city.put("id", 1);
+    city.put("city", "Amsterdam");
+
+    assertEquals(EXPECTED, new PostmanV2Generator().convertToJson(city));
+
+  }
+
+  @Test
+  public void convertNestedLinkedHashMapToJson() {
+
+    final String EXPECTED =
+            "{\\n " +
+                    "\\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\",\\n " +
+                    "\\\"country\\\": {\\n \\\"id\\\": 2,\\n \\\"code\\\": \\\"NL\\\"\\n}" +
+                    "\\n}";
+
+    LinkedHashMap<String, Object> city = new LinkedHashMap<>();
+    city.put("id", 1);
+    city.put("city", "Amsterdam");
+    LinkedHashMap<String, Object> country = new LinkedHashMap<>();
+    country.put("id", 2);
+    country.put("code", "NL");
+    city.put("country", country);
+
+    assertEquals(EXPECTED, new PostmanV2Generator().convertToJson(city));
+
+  }
 
 }

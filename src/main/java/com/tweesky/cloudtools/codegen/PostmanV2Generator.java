@@ -18,7 +18,11 @@ import java.util.regex.Pattern;
  * OpenAPI generator for Postman format v2.1
  */
 public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig {
+
   private final Logger LOGGER = LoggerFactory.getLogger(PostmanV2Generator.class);
+
+  public static final String JSON_ESCAPE_DOUBLE_QUOTE = "\\\"";
+  public static final String JSON_ESCAPE_NEW_LINE = "\\n";
 
   // source folder where to write the files
   protected String sourceFolder = "src";
@@ -226,7 +230,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       codegenOperation.vendorExtensions.put("pathSegments", pathSegments);
       codegenOperation.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
-      Object requestBody = getRequestBody(codegenOperation);
+      String requestBody = getRequestBody(codegenOperation);
       if(requestBody != null) {
         codegenOperation.vendorExtensions.put("requestBody", getRequestBody(codegenOperation));
         codegenOperation.vendorExtensions.put("hasRequestBody", true);
@@ -235,7 +239,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       }
 
       for(CodegenResponse codegenResponse : codegenOperation.responses) {
-        Object responseBody = getResponseBody(codegenResponse);
+        String responseBody = getResponseBody(codegenResponse);
 
         if(responseBody != null) {
           codegenResponse.vendorExtensions.put("responseBody", responseBody);
@@ -280,8 +284,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     codegenOperationsList.add(codegenOperation);
   }
 
-  Object getResponseBody(CodegenResponse codegenResponse) {
-    Object responseBody = null;
+  String getResponseBody(CodegenResponse codegenResponse) {
+    String responseBody = "";
 
     if(codegenResponse.getContent() != null && codegenResponse.getContent().get("application/json") != null &&
             codegenResponse.getContent().get("application/json").getExamples() != null) {
@@ -296,7 +300,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       // find in context examples
       Map<String, Example> maxExamples = codegenResponse.getContent().get("application/json").getExamples();
       if(maxExamples != null && maxExamples.values().iterator().hasNext()) {
-        responseBody = maxExamples.values().iterator().next().getValue();
+        responseBody = getExampleValue(maxExamples.values().iterator().next());
       }
     }
 
@@ -311,27 +315,27 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     }
 
     if(example.getValue() instanceof ObjectNode) {
-      ret = example.getValue().toString();
+      ret = convertToJson((ObjectNode)example.getValue());
     } else if(example.getValue() instanceof LinkedHashMap) {
       final ObjectMapper mapper = new ObjectMapper();
-      ret = mapper.convertValue(example.getValue(), ObjectNode.class).toString();
+      ret = convertToJson((LinkedHashMap)example.getValue());
     }
 
     return ret;
   }
 
-  Object getRequestBody(CodegenOperation codegenOperation) {
-    Object requestBody = null;
+  String getRequestBody(CodegenOperation codegenOperation) {
+    String requestBody = null;
 
     if(codegenOperation.getHasBodyParam()) {
       if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
         // get from schema
-        requestBody = generateExampleFromSchema(codegenOperation.bodyParam);
+        requestBody = generateJsonFromSchema(codegenOperation.bodyParam);
       } else {
         // get from examples
         if (codegenOperation.bodyParam.example != null) {
           // find in bodyParam example
-          requestBody = codegenOperation.bodyParam.example;
+          requestBody = formatJson(codegenOperation.bodyParam.example);
         } else if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
                 codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
           // find in components/examples
@@ -339,10 +343,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
                   .values().iterator().next().get$ref();
           Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
           requestBody = getExampleValue(example);
-
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
-          requestBody = codegenOperation.bodyParam.getSchema().getExample();
+          requestBody = formatJson(codegenOperation.bodyParam.getSchema().getExample());
         }
       }
     }
@@ -350,15 +353,89 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return requestBody;
   }
 
-  String generateExampleFromSchema(CodegenParameter codegenParameter) {
+  // format JSON (string) escaping and formatting
+  String formatJson(String json) {
+    String ret = json;
 
-    String ret = "\"{";
-    for (CodegenProperty codegenProperty : codegenParameter.vars) {
-      ret = ret + codegenProperty.baseName + " = " + "<" + getPostmanType(codegenProperty) + ">, ";
+    ret = ret.replace("{", "{" + JSON_ESCAPE_NEW_LINE + " ");
+    ret = ret.replace("}", JSON_ESCAPE_NEW_LINE + "}");
+    ret = ret.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
+    ret = ret.replace(":", ": ");
+    ret = ret.replace(",", "," + JSON_ESCAPE_NEW_LINE + " ");
+
+    return ret;
+  }
+
+  // convert to JSON (string) escaping and formatting
+  String convertToJson(ObjectNode objectNode) {
+    return formatJson(objectNode.toString());
+  }
+
+  // convert to JSON (string) escaping and formatting
+  String convertToJson(LinkedHashMap<String, Object> linkedHashMap) {
+    String ret = "";
+
+    return traverseMap(linkedHashMap, ret);
+  }
+
+  // traverse recursively
+  private String traverseMap(LinkedHashMap<String, Object> linkedHashMap, String ret) {
+
+    ret = ret + "{" + JSON_ESCAPE_NEW_LINE + " ";
+
+    int numVars = linkedHashMap.entrySet().size();
+    int counter = 1;
+
+    for (Map.Entry<String, Object> mapElement : linkedHashMap.entrySet()) {
+      String key = mapElement.getKey();
+      Object value = mapElement.getValue();
+
+      if(value instanceof String) {
+        ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
+                JSON_ESCAPE_DOUBLE_QUOTE + value + JSON_ESCAPE_DOUBLE_QUOTE;
+      } else if (value instanceof Integer) {
+        ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
+                value;
+      } else if (value instanceof LinkedHashMap) {
+        String in = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": ";
+        ret = traverseMap(((LinkedHashMap<String, Object>) value),  in);
+      } else {
+        LOGGER.warn("Value type unrecognised: " + value.getClass());
+      }
+
+      if(counter < numVars) {
+        // add comma unless last attribute
+        ret = ret + "," + JSON_ESCAPE_NEW_LINE + " ";
+      }
+      counter++;
     }
-    ret = ret.substring(0, ret.length() - 2);
 
-    ret = ret + "}\"";
+    ret = ret + JSON_ESCAPE_NEW_LINE + "}";
+
+    return ret;
+  }
+
+  // generate JSON (string) escaping and formatting
+  String generateJsonFromSchema(CodegenParameter codegenParameter) {
+
+    String ret = "{" + JSON_ESCAPE_NEW_LINE + " ";
+
+    int numVars = codegenParameter.vars.size();
+    int counter = 1;
+
+    for (CodegenProperty codegenProperty : codegenParameter.vars) {
+      ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + codegenProperty.baseName + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
+              JSON_ESCAPE_DOUBLE_QUOTE + "<" + getPostmanType(codegenProperty) + ">" + JSON_ESCAPE_DOUBLE_QUOTE;
+
+      if(counter < numVars) {
+        // add comma unless last attribute
+        ret = ret + "," + JSON_ESCAPE_NEW_LINE + " ";
+      }
+      counter++;
+
+    }
+
+    ret = ret + JSON_ESCAPE_NEW_LINE + "}";
 
     return ret;
   }
