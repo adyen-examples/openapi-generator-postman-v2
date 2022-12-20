@@ -177,8 +177,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     OperationMap ops = results.getOperations();
     List<CodegenOperation> opList = ops.getOperation();
 
-
-    // iterate over the operations to customise operations
     for(CodegenOperation codegenOperation : opList) {
 
       if(pathParamsAsVariables) {
