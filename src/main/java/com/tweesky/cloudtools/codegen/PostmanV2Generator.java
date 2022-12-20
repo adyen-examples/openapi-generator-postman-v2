@@ -168,7 +168,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   }
   /**
-   * Provides an opportunity to inspect and modify operation data before the code is generated.
+   * Process and modify operations before generating code
    */
   @Override
   public OperationsMap postProcessOperationsWithModels(OperationsMap objs, List<ModelMap> allModels) {
