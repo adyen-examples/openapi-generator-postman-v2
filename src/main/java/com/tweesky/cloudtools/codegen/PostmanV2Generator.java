@@ -220,7 +220,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
       String requestBody = getRequestBody(codegenOperation);
       if(requestBody != null) {
-        codegenOperation.vendorExtensions.put("requestBody", getRequestBody(codegenOperation));
+        codegenOperation.vendorExtensions.put("requestBody", requestBody);
         codegenOperation.vendorExtensions.put("hasRequestBody", true);
       } else {
         codegenOperation.vendorExtensions.put("hasRequestBody", false);
