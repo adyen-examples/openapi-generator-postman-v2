@@ -51,7 +51,7 @@ Build `postman-v2` from source
 
 Run OpenAPI Generator adding `postman-v2` jar file in the class path and specifying the `PostmanV2Generator` generator:
 ```shell
-java -cp target/postman-v2-openapi-generator-1.0.0-SNAPSHOT.jar:/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar \
+java -cp target/openapi-generator-postman-v2.jar:/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar \
   org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator \
   -i src/test/resources/BasicJson.json -o output
 ```
