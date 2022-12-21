@@ -228,7 +228,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
       for(CodegenResponse codegenResponse : codegenOperation.responses) {
         String responseBody = getResponseBody(codegenResponse);
-
         if(responseBody != null) {
           codegenResponse.vendorExtensions.put("responseBody", responseBody);
           codegenResponse.vendorExtensions.put("hasResponseBody", true);
