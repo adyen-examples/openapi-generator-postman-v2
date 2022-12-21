@@ -32,6 +32,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String NAMING_REQUESTS = "namingRequests";
   public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
 
+  public static final String POSTMAN_VARIABLES = "postmanVariables";
+
   public static final String REQUEST_PARAMETER_GENERATION = "requestParameterGeneration";
   public static final String REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE = "Example";
 
@@ -40,9 +42,11 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
   protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE; // values: Feedback | URL
+
   protected String requestParameterGeneration = REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE; // values: Example, Schema
 
   Set<PostmanVariable> variables = new HashSet<>();
+  String[] postmanVariableNames = null;
 
   // operations grouped by tag
   protected Map<String, List<CodegenOperation>> codegenOperationsByTag = new HashMap<>();
@@ -76,6 +80,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
     cliOptions.add(CliOption.newString(POSTMAN_FILE, "name of the generated Postman file"));
     cliOptions.add(CliOption.newString(NAMING_REQUESTS, "how the requests inside the generated collection will be named (Fallback or URL)"));
+    cliOptions.add(CliOption.newString(POSTMAN_VARIABLES, "list of Postman variables to create"));
     cliOptions.add(CliOption.newString(REQUEST_PARAMETER_GENERATION, "whether to generate the request parameters based on the schema or the examples"));
 
     /**
@@ -149,6 +154,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       requestParameterGeneration = additionalProperties().get(REQUEST_PARAMETER_GENERATION).toString();
     }
 
+    if(additionalProperties().containsKey(POSTMAN_VARIABLES)) {
+      extractPostmanVariableNames(additionalProperties().get(POSTMAN_VARIABLES).toString());
+    }
+
     supportingFiles.add(
             new SupportingFile("postman.mustache", "", postmanFile)
     );
@@ -220,6 +229,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
       String requestBody = getRequestBody(codegenOperation);
       if(requestBody != null) {
+
+        if(isCreatePostmanVariables()) {
+          requestBody = createPostmanVariables(requestBody);
+        }
         codegenOperation.vendorExtensions.put("requestBody", requestBody);
         codegenOperation.vendorExtensions.put("hasRequestBody", true);
       } else {
@@ -323,6 +336,28 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return requestBody;
   }
 
+  // split, trim
+  void extractPostmanVariableNames(String postmanVariablesCsv) {
+    postmanVariableNames = postmanVariablesCsv.split(",");
+    Arrays.parallelSetAll(postmanVariableNames, (i) -> postmanVariableNames[i].trim());
+  }
+  boolean isCreatePostmanVariables() {
+    return postmanVariableNames != null;
+  }
+  String createPostmanVariables(String requestBody) {
+
+    for (String var : postmanVariableNames) {
+      requestBody = requestBody.replace(var, "{{" + var + "}}");
+
+      variables.add(new PostmanVariable()
+              .addName(var)
+              .addType("string")
+              .addExample(""));
+    }
+
+    return requestBody;
+  }
+
   /**
    * Returns human-friendly help for the generator.  Provide the consumer with help
    * tips, parameters here
@@ -396,5 +431,4 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   String extractExampleByName(String ref) {
     return ref.substring(ref.lastIndexOf("/") + 1);
   }
-
 }

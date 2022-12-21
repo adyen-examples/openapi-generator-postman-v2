@@ -30,6 +30,7 @@ public class PostmanV2GeneratorTest {
     postmanV2Generator.processOpts();
 
     Assert.assertEquals(postmanV2Generator.folderStrategy, "Paths");
+    Assert.assertEquals(postmanV2Generator.postmanFile, "postman.json");
 
     Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsList"));
     Assert.assertNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
@@ -47,6 +48,16 @@ public class PostmanV2GeneratorTest {
     Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
   }
 
+  @Test
+  public void testConfigWithCreationPostmanVariables() throws Exception {
+    final PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
+
+    postmanV2Generator.additionalProperties().put(postmanV2Generator.POSTMAN_VARIABLES, "VAR1,VAR2,VAR3");
+    postmanV2Generator.processOpts();
+
+    Assert.assertTrue(postmanV2Generator.isCreatePostmanVariables());
+    Assert.assertArrayEquals(postmanV2Generator.postmanVariableNames, new String[]{"VAR1", "VAR2", "VAR3"});
+  }
   @Test
   public void testBasicGeneration() throws IOException {
 
@@ -147,6 +158,36 @@ public class PostmanV2GeneratorTest {
     assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
   }
 
+  @Test
+  public void testVariablesInRequestExample() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/BasicVariablesInExample.yaml")
+            .addAdditionalProperty(PostmanV2Generator.POSTMAN_VARIABLES, "MY_VAR_NAME ,MY_VAR_LAST_NAME ")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+
+    JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
+    // verify json has variables
+    assertTrue(jsonObject.get("variable") instanceof JSONArray);
+    assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
+
+    TestUtils.assertFileContains(path, "{{MY_VAR_NAME}}");
+
+  }
   @Test
   public void testGenerateWithoutPathParamsVariables() throws IOException, ParseException {
 
@@ -274,5 +315,26 @@ public class PostmanV2GeneratorTest {
     assertEquals("get-user-basic", new PostmanV2Generator().extractExampleByName(str));
   }
 
+  @Test
+  public void processRequestExample() {
+    String STR = "{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"MY_VAR_1\\\",\\n \\\"MY_VAR_2\\\": \\\"Rotta\\\"\\n}";
+    String EXPECTED = "{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"{{MY_VAR_1}}\\\",\\n \\\"{{MY_VAR_2}}\\\": \\\"Rotta\\\"\\n}";;
+
+    PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
+    postmanV2Generator.postmanVariableNames = new String[]{"MY_VAR_1", "MY_VAR_2"};
+
+    String newRequestBody = postmanV2Generator.createPostmanVariables(STR);
+
+    assertEquals(EXPECTED, newRequestBody);
+    assertEquals(2, postmanV2Generator.variables.size());
+  }
+
+  @Test
+  public void extractPostmanVariableNames() {
+    PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
+
+    postmanV2Generator.extractPostmanVariableNames("var1,var2   ,var3");
+    assertEquals(3, postmanV2Generator.postmanVariableNames.length);
+  }
 
 }
