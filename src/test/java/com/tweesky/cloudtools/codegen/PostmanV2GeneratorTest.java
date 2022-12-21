@@ -189,7 +189,7 @@ public class PostmanV2GeneratorTest {
     List<File> files = generator.opts(clientOptInput).generate();
 
     System.out.println(files);
-    //files.forEach(File::deleteOnExit);
+    files.forEach(File::deleteOnExit);
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
@@ -237,7 +237,7 @@ public class PostmanV2GeneratorTest {
     List<File> files = generator.opts(configurator.toClientOptInput()).generate();
 
     System.out.println(files);
-    //files.forEach(File::deleteOnExit);
+    files.forEach(File::deleteOnExit);
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
