@@ -32,7 +32,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String NAMING_REQUESTS = "namingRequests";
   public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
 
-  public static final String REQUEST_PARAMETER_GENERATION = "requestParameterGeneration ";
+  public static final String REQUEST_PARAMETER_GENERATION = "requestParameterGeneration";
   public static final String REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE = "Example";
 
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE; // values: Paths | Tags
