@@ -1,9 +1,28 @@
 # OpenAPI Generator for Postman v2
 
 ## Overview
-Implementation of the OpenAPI generator for Postman format v2.1
+Implementation of the OpenAPI generator for Postman format v2.1.
+
+From an OpenAPI file it generates a Postman collection in the Postman V2 json format.
+
+See available [options](#config-options) to customise the generation.
 
 ## Usage
+
+* [Run with Docker](#run-with-docker)
+* [Create a test](#create-a-test)
+* [Build from source](#run-from-source)
+
+### Run with Docker
+
+Run with pre-built image passing `inputFile` (path of the OpenAPI spec file) and `outputFolder` (location 
+of the generated file i.e ./postman/gen)
+
+```docker
+docker run -it --rm -v $(pwd):/usr/src/app \ 
+  -e inputFile=src/test/resources/SampleProject.yaml -e outputFolder=tmp \
+    gcatanese/openapi-generator-postman-v2
+```
 
 ### Create a test
 
