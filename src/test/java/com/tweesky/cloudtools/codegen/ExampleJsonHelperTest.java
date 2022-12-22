@@ -75,6 +75,21 @@ public class ExampleJsonHelperTest {
     }
 
     @Test
+    public void convertObjectNodeIncludingDoubleQuoteToJson() {
+
+        final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"it is \\\"Amsterdam\\\" \\\"\\n}";
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode city = mapper.createObjectNode();
+
+        city.put("id", 1);
+        city.put("city", "it is \"Amsterdam\" ");
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(city));
+
+    }
+
+    @Test
     public void convertLinkedHashMapToJson() {
 
         final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";

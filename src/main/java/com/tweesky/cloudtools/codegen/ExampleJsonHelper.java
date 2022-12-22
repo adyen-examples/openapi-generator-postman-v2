@@ -66,6 +66,9 @@ public class ExampleJsonHelper {
     String formatJson(String json) {
         String ret = json;
 
+        // unescape double quotes already escaped
+        ret = ret.replace("\\\"", "\"");
+
         ret = ret.replace("{", "{" + JSON_ESCAPE_NEW_LINE + " ");
         ret = ret.replace("}", JSON_ESCAPE_NEW_LINE + "}");
         ret = ret.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
@@ -99,6 +102,9 @@ public class ExampleJsonHelper {
             Object value = mapElement.getValue();
 
             if(value instanceof String) {
+                // unescape double quotes already escaped
+                value = ((String)value).replace("\\\"", "\"");
+
                 ret = ret + JSON_ESCAPE_DOUBLE_QUOTE + key + JSON_ESCAPE_DOUBLE_QUOTE + ": " +
                         JSON_ESCAPE_DOUBLE_QUOTE + value + JSON_ESCAPE_DOUBLE_QUOTE;
             } else if (value instanceof Integer) {
