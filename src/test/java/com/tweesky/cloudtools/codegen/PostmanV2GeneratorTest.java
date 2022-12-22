@@ -337,4 +337,10 @@ public class PostmanV2GeneratorTest {
     assertEquals(3, postmanV2Generator.postmanVariableNames.length);
   }
 
+  @Test
+  public void mapToPostmanType() {
+    assertEquals("string", new PostmanV2Generator().mapToPostmanType("String"));
+    assertEquals("number", new PostmanV2Generator().mapToPostmanType("integer"));
+    assertEquals("any", new PostmanV2Generator().mapToPostmanType("object"));
+  }
 }

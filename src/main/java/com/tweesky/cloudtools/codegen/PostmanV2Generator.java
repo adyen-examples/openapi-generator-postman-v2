@@ -112,7 +112,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     if(pathParamsAsVariables && parameter.isPathParam) {
       variables.add(new PostmanVariable()
               .addName(parameter.paramName)
-              .addType(parameter.dataType)
+              .addType(mapToPostmanType(parameter.dataType))
               .addExample(parameter.example));
     }
   }
@@ -430,5 +430,21 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   String extractExampleByName(String ref) {
     return ref.substring(ref.lastIndexOf("/") + 1);
+  }
+
+  String mapToPostmanType(String openApiDataType) {
+    String ret = "any";  // default value
+
+    if(openApiDataType.equalsIgnoreCase("string")) {
+      ret = "string";
+    } else if(openApiDataType.equalsIgnoreCase("number") ||
+            openApiDataType.equalsIgnoreCase("integer")) {
+      ret = "number";
+    } else if(openApiDataType.equalsIgnoreCase("boolean")) {
+      ret = "boolean";
+    }
+
+    return ret;
+
   }
 }
