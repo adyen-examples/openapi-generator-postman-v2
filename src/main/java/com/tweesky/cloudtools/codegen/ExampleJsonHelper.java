@@ -1,6 +1,5 @@
 package com.tweesky.cloudtools.codegen;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.models.examples.Example;
 import org.openapitools.codegen.CodegenParameter;
@@ -58,7 +57,6 @@ public class ExampleJsonHelper {
         if(example.getValue() instanceof ObjectNode) {
             ret = convertToJson((ObjectNode)example.getValue());
         } else if(example.getValue() instanceof LinkedHashMap) {
-            final ObjectMapper mapper = new ObjectMapper();
             ret = convertToJson((LinkedHashMap)example.getValue());
         }
 
