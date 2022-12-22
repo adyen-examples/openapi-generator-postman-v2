@@ -55,7 +55,16 @@
                 "name": "{{message}}",
                 "originalRequest": {
                     "method": "{{httpMethod}}",
-                    "header": [],
+                    "header": [],{{#vendorExtensions.hasRequestBody}}
+                    "body": {
+                        "mode": "raw",
+                        "raw": "{{{vendorExtensions.requestBody}}}",
+                        "options": {
+                            "raw": {
+                                "language": "json"
+                            }
+                        }
+                    },{{/vendorExtensions.hasRequestBody}}
                     "url": {
                         "raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
                         "host": [

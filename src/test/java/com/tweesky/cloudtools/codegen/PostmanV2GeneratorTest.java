@@ -131,7 +131,7 @@ public class PostmanV2GeneratorTest {
     mapper.readTree(new FileReader(output + "/postman.json"));
 
   }
-
+  
   @Test
   public void testVariables() throws IOException, ParseException {
 

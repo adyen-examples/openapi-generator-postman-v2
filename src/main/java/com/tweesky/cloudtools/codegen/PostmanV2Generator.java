@@ -227,6 +227,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       codegenOperation.vendorExtensions.put("pathSegments", pathSegments);
       codegenOperation.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
+      // set request body
       String requestBody = getRequestBody(codegenOperation);
       if(requestBody != null) {
 
@@ -239,7 +240,18 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         codegenOperation.vendorExtensions.put("hasRequestBody", false);
       }
 
+      // set all available responses
       for(CodegenResponse codegenResponse : codegenOperation.responses) {
+
+        if(requestBody != null) {
+          // re-use request body for each response
+          codegenResponse.vendorExtensions.put("requestBody", requestBody);
+          codegenResponse.vendorExtensions.put("hasRequestBody", true);
+
+        } else {
+          codegenResponse.vendorExtensions.put("hasRequestBody", false);
+        }
+
         String responseBody = getResponseBody(codegenResponse);
         if(responseBody != null) {
           codegenResponse.vendorExtensions.put("responseBody", responseBody);
