@@ -248,7 +248,10 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
+    ApiKeyAuth:
       type: apiKey
+      name: X-API-Key
+      in: header
   schemas:
     User:
       title: User
