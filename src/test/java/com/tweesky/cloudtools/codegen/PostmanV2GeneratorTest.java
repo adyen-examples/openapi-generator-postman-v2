@@ -155,7 +155,7 @@ public class PostmanV2GeneratorTest {
     JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
     // verify json has variables
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
+    assertEquals(5, ((JSONArray) jsonObject.get("variable")).size());
   }
 
   @Test
@@ -211,7 +211,7 @@ public class PostmanV2GeneratorTest {
     JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
     // verify json has only Server variables (baseUrl, etc..)
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(3, ((JSONArray) jsonObject.get("variable")).size());
+    assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
   }
 
   @Test
@@ -286,6 +286,37 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileContains(path, "{\\n \\\"firstName\\\": \\\"<string>\\\",\\n \\\"lastName\\\": \\\"<string>\\\",\\n \\\"email\\\": \\\"<string>\\\",\\n \\\"dateOfBirth\\\": \\\"<date>\\\"\\n}");
 
   }
+
+  @Test
+  public void testApiKeyIsFound() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    // check auth apiKey
+    TestUtils.assertFileContains(path, "\"auth\": { \"type\": \"apikey\", \"apikey\": [");
+    // check variable X-API-Key
+    TestUtils.assertFileContains(path, "{\n" +
+            "            \"key\": \"X-API-Key\",\n" +
+            "            \"value\": \"\",\n" +
+            "            \"type\": \"string\"\n" +
+            "        }");
+  }
+
 
   @Test
   public void extractVariables() {

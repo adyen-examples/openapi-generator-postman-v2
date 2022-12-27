@@ -248,6 +248,7 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
+      type: apiKey
   schemas:
     User:
       title: User

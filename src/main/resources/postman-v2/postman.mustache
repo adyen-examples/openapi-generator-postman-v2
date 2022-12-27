@@ -19,6 +19,21 @@
         {{>item}}{{^-last}},{{/-last}}
 	{{/codegenOperationsList}}
     ],
+    {{#authMethods}}{{#isApiKey}}"auth": {
+    		"type": "apikey",
+    		"apikey": [
+    			{
+    				"key": "value",
+    				"value": "{{=<% %>=}}{{<%={{ }}=%>{{keyParamName}}{{=<% %>=}}}}<%={{ }}=%>",
+    				"type": "string"
+    			},
+    			{
+    				"key": "key",
+    				"value": "{{keyParamName}}",
+    				"type": "string"
+    			}
+    		]
+    	},{{/isApiKey}}{{/authMethods}}
 	"variable": [{{#servers}}{{#-first}}
 		{
 			"key": "baseUrl",
@@ -30,7 +45,12 @@
 			"key": "{{name}}",
 			"value": "{{example}}",
 			"type": "{{type}}"
-		}{{^-last}},{{/-last}}{{/variables}}{{/-first}}{{/vendorExtensions}}{{/apis}}{{/apiInfo}}
+		}{{^-last}},{{/-last}}{{/variables}}{{/-first}}{{/vendorExtensions}}{{/apis}}{{/apiInfo}}{{#authMethods}}{{#isApiKey}},
+        {
+            "key": "{{keyParamName}}",
+            "value": "",
+            "type": "string"
+        }{{/isApiKey}}{{/authMethods}}
 	]
 }
 
