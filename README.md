@@ -16,12 +16,25 @@ See available [options](#config-options) to customise the generation.
 ### Run with Docker
 
 Run with pre-built image passing `inputFile` (path of the OpenAPI spec file) and `outputFolder` (location 
-of the generated file i.e ./postman/gen)
+of the generated file i.e ./postman/gen).
+
+It supports the following commands:
+* `generate`: create the postman.json file
+* `push`: create postman.json and push to your postman.com default workspace
 
 ```docker
-docker run -it --rm -v $(pwd):/usr/src/app \ 
-  -e inputFile=src/test/resources/SampleProject.yaml -e outputFolder=tmp \
-    gcatanese/openapi-generator-postman-v2
+# generate only
+docker run -v $(pwd):/usr/src/app \ 
+   -e inputFile=src/test/resources/SampleProject.yaml \ 
+   -e outputFolder=tmp \ 
+   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate  
+
+# generate and push to Postman.com
+docker run -v $(pwd):/usr/src/app \ 
+   -e inputFile=src/test/resources/SampleProject.yaml \ 
+   -e outputFolder=tmp \ 
+   -e postmanApiKey=YOUR_POSTMAN_API_KEY \
+   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 push  
 ```
 
 ### Create a test
