@@ -41,7 +41,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE; // values: true | false
 
   protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
-  protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE; // values: Feedback | URL
+  protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE; // values: Fallback | URL
 
   protected String requestParameterGeneration = REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE; // values: Example, Schema
 
