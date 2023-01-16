@@ -15,45 +15,38 @@ See available [options](#config-options) to customise the generation.
 
 ### Run with Docker
 
-Run with pre-built image passing `inputFile` (path of the OpenAPI spec file) and `outputFolder` (location 
+Run with pre-built image passing `-i` inputspec (path of the OpenAPI spec file) and `-o` output dir (location 
 of the generated file i.e ./postman/gen).
 
 It supports the following commands:
 * `generate`: create the postman.json file
-* `push`: create postman.json and push to your postman.com default workspace
+* `push`: create postman.json and push to your postman.com default `My Workspace`. 
+This uses the [Postman API](https://www.postman.com/postman/workspace/postman-public-workspace/folder/12959542-c705956d-1005-4fbc-803c-b6b985242a85?ctx=documentation) 
+and requires a valid API key from Postman's integrations [dashboard](https://web.postman.co/settings/me/api-keys).
 
 ```docker
 # generate only
-docker run -v $(pwd):/usr/src/app \ 
-   -e inputFile=src/test/resources/SampleProject.yaml \ 
-   -e outputFolder=tmp \ 
-   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate  
+docker run -v $(pwd):/usr/src/app \
+   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate \
+   -i src/test/resources/SampleProject.yaml \
+   -o tmp 
+
+# generate only (with additional parameters)
+docker run -v $(pwd):/usr/src/app \
+   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate \
+   -i src/test/resources/SampleProject.yaml \
+   -o tmp \
+   --additional-properties folderStrategy=Tags,postmanFile=myPostman.json,postmanVariables=MY_VAR1-ANOTHERVAR
+
 
 # generate and push to Postman.com
-docker run -v $(pwd):/usr/src/app \ 
-   -e inputFile=src/test/resources/SampleProject.yaml \ 
-   -e outputFolder=tmp \ 
-   -e postmanApiKey=YOUR_POSTMAN_API_KEY \
-   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 push  
-```
-
-### Create a test
-
-The easiest way to run the `postman-v2` OpenAPI generator is to create a custom unit test.
-The postman.json will be created in the specified `outputDir`.
-
-```java
-    // configure generator
-    final CodegenConfigurator configurator = new CodegenConfigurator()
-            .setGeneratorName("postman-v2")
-            .setInputSpec("/path/to/openapifile.json")
-            .setOutputDir("/output");
-    
-    final ClientOptInput clientOptInput = configurator.toClientOptInput();
-    // generate
-    DefaultGenerator generator = new DefaultGenerator();
-    List<File> files = generator.opts(clientOptInput).generate();
-
+# note: require POSTMAN API KEY
+docker run -v $(pwd):/usr/src/app \
+   -e POSTMAN_API_KEY=YOUR_POSTMAN_API_KEY \
+   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 push \
+   -i src/test/resources/SampleProject.yaml \
+   -o tmp \
+   --additional-properties folderStrategy=Tags,postmanFile=myPostman.json,postmanVariables=MY_VAR1-ANOTHERVAR      
 ```
 
 ### Run from source
