@@ -5,7 +5,7 @@ Implementation of the OpenAPI generator for Postman format v2.1.
 
 From an OpenAPI file it generates a Postman collection in the Postman V2 json format.
 
-See available [options](#config-options) to customise the generation.
+See the available [options](#config-options) to customise the generation.
 
 ## Usage
 
@@ -14,7 +14,7 @@ See available [options](#config-options) to customise the generation.
 
 ### Run with Docker
 
-Run with pre-built image passing `-i` inputspec (path of the OpenAPI spec file) and `-o` output dir (location 
+Run with the pre-built image passing `-i` inputspec (path of the OpenAPI spec file) and `-o` output dir (location 
 of the generated file i.e ./postman/gen).
 
 It supports the following commands:
