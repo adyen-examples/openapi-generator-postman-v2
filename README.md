@@ -10,7 +10,6 @@ See available [options](#config-options) to customise the generation.
 ## Usage
 
 * [Run with Docker](#run-with-docker)
-* [Create a test](#create-a-test)
 * [Build from source](#run-from-source)
 
 ### Run with Docker
