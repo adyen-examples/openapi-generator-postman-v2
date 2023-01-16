@@ -1,8 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot
 
-# default destination folder
-ENV outputFolder=/usr/src/app
-
 WORKDIR /usr/src/app
 
 COPY tmp/openapi-generator-cli.jar /openapi-generator-cli.jar
