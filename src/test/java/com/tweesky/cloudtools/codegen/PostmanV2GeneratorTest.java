@@ -52,7 +52,7 @@ public class PostmanV2GeneratorTest {
   public void testConfigWithCreationPostmanVariables() throws Exception {
     final PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
 
-    postmanV2Generator.additionalProperties().put(postmanV2Generator.POSTMAN_VARIABLES, "VAR1,VAR2,VAR3");
+    postmanV2Generator.additionalProperties().put(postmanV2Generator.POSTMAN_VARIABLES, "VAR1-VAR2-VAR3");
     postmanV2Generator.processOpts();
 
     Assert.assertTrue(postmanV2Generator.isCreatePostmanVariables());
@@ -167,7 +167,7 @@ public class PostmanV2GeneratorTest {
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
             .setInputSpec("./src/test/resources/BasicVariablesInExample.yaml")
-            .addAdditionalProperty(PostmanV2Generator.POSTMAN_VARIABLES, "MY_VAR_NAME ,MY_VAR_LAST_NAME ")
+            .addAdditionalProperty(PostmanV2Generator.POSTMAN_VARIABLES, "MY_VAR_NAME -MY_VAR_LAST_NAME ")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
     final ClientOptInput clientOptInput = configurator.toClientOptInput();
@@ -364,7 +364,7 @@ public class PostmanV2GeneratorTest {
   public void extractPostmanVariableNames() {
     PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
 
-    postmanV2Generator.extractPostmanVariableNames("var1,var2   ,var3");
+    postmanV2Generator.extractPostmanVariableNames("var1-var2   -var3");
     assertEquals(3, postmanV2Generator.postmanVariableNames.length);
   }
 

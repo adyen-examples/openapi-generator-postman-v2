@@ -350,7 +350,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   // split, trim
   void extractPostmanVariableNames(String postmanVariablesCsv) {
-    postmanVariableNames = postmanVariablesCsv.split(",");
+    postmanVariableNames = postmanVariablesCsv.split("-");
     Arrays.parallelSetAll(postmanVariableNames, (i) -> postmanVariableNames[i].trim());
   }
   boolean isCreatePostmanVariables() {
