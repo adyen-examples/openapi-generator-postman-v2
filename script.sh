@@ -6,32 +6,34 @@ if [ $# == 0 ]; then
 fi
 
 command=$1
+cmdline=$@
 echo "-->Executing [$command]"
 
-if [[ $command == "push" ]]
+if [[ $command == "generate" ]]
 then
-  if [[ $postmanApiKey == "" ]]
+  cmdparams="${cmdline#*generate}"
+elif [[ $command == "push" ]]
+then
+  if [[ $POSTMAN_API_KEY == "" ]]
   then
     echo "ERROR: define postmanApiKey when running [push] command "
     exit
   fi
+    cmdparams="${cmdline#*push}"
 fi
 
 java -cp /openapi-generator-postman-v2.jar:/openapi-generator-cli.jar \
-  org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator \
-  -i $inputFile -o $outputFolder --additional-properties namingRequests=url
-
-echo "--> Generated $outputFolder/postman.json"
+  org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator $cmdparams
 
 if [[ $command == "push" ]]
 then
   echo "--> Pushing to Postman"
 
-  value=`cat $outputFolder/postman.json`
+  var=$(cat /usr/src/app/tmp/postman.json)
 
-  curl --location --request POST 'https://api.getpostman.com/collections' \
+  echo '{"collection": '"$var"' }' | curl -X POST \
   --header 'Content-Type: application/json' \
-  --header 'X-API-Key: '"${postmanApiKey}"'' \
-  --data-raw '{ "collection": '"$value"' }'
+  --header 'X-API-Key: '"${POSTMAN_API_KEY}"'' \
+  -d @- "https://api.getpostman.com/collections"
 
 fi
