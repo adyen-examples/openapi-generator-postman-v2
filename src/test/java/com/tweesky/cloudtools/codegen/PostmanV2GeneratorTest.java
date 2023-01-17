@@ -66,7 +66,6 @@ public class PostmanV2GeneratorTest {
 
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
-            .addAdditionalProperty(PostmanV2Generator.POSTMAN_FILE, "basic.json")
             .setInputSpec("./src/test/resources/Basic.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
@@ -77,7 +76,7 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    Path path = Paths.get(output + "/basic.json");
+    Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
     TestUtils.assertFileContains(path, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
 

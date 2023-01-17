@@ -27,7 +27,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Paths";
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;
-  public static final String POSTMAN_FILE = "postmanFile";
   public static final String POSTMAN_FILE_DEFAULT_VALUE = "postman.json";
   public static final String NAMING_REQUESTS = "namingRequests";
   public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
@@ -78,7 +77,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
     cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
-    cliOptions.add(CliOption.newString(POSTMAN_FILE, "name of the generated Postman file"));
     cliOptions.add(CliOption.newString(NAMING_REQUESTS, "how the requests inside the generated collection will be named (Fallback or URL)"));
     cliOptions.add(CliOption.newString(POSTMAN_VARIABLES, "list of Postman variables to create"));
     cliOptions.add(CliOption.newString(REQUEST_PARAMETER_GENERATION, "whether to generate the request parameters based on the schema or the examples"));
@@ -140,10 +138,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     if (additionalProperties.containsKey(PATH_PARAMS_AS_VARIABLES)) {
       pathParamsAsVariables = Boolean.parseBoolean(additionalProperties.get(PATH_PARAMS_AS_VARIABLES).toString());
-    }
-
-    if(additionalProperties.containsKey(POSTMAN_FILE)) {
-      postmanFile = additionalProperties.get(POSTMAN_FILE).toString();
     }
 
     if(additionalProperties.containsKey(NAMING_REQUESTS)) {

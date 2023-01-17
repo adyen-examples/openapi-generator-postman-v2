@@ -35,7 +35,7 @@ docker run -v $(pwd):/usr/src/app \
    -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate \
    -i src/test/resources/SampleProject.yaml \
    -o tmp \
-   --additional-properties folderStrategy=Tags,postmanFile=myPostman.json,postmanVariables=MY_VAR1-ANOTHERVAR
+   --additional-properties folderStrategy=Tags,postmanVariables=MY_VAR1-ANOTHERVAR
 
 
 # generate and push to Postman.com
@@ -45,7 +45,7 @@ docker run -v $(pwd):/usr/src/app \
    -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 push \
    -i src/test/resources/SampleProject.yaml \
    -o tmp \
-   --additional-properties folderStrategy=Tags,postmanFile=myPostman.json,postmanVariables=MY_VAR1-ANOTHERVAR      
+   --additional-properties folderStrategy=Tags,postmanVariables=MY_VAR1-ANOTHERVAR      
 ```
 
 ### Run from source
@@ -77,7 +77,6 @@ These options may be applied as additional-properties (cli) or configOptions (pl
 | ------ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|--------------|
 |folderStrategy| whether to create folders according to the spec’s paths or tags                                                                                                                             | Paths, Tags     | Paths        |
 |pathParamsAsVariables| boolean, whether to create Postman variables for path parameters                                                                                                                            | true, false     | true         |
-|postmanFile| name of the generated Postman file                                                                                                                                                          |                 | postman.json |
 |namingRequests| how the requests inside the generated collection will be named. If “Fallback” is selected, the request will be named after one of the following schema values: description, operationid, url | Fallback, URL   | Fallback     |
 |postmanVariables| kebab-case list of Postman variables (i.e VAR1-VAR2-VAR3) to be created during the generation. Matching placeholders in request bodies will be defined as Postman variables                 |                 |       |
 |requestParameterGeneration| whether to generate the request parameters based on the schema or the examples                                                                                                              | Example, Schema | Example      |
