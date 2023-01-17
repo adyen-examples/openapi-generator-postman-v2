@@ -22,8 +22,14 @@ then
     cmdparams="${cmdline#*push}"
 fi
 
-java -cp /openapi-generator-postman-v2.jar:/openapi-generator-cli.jar \
-  org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator $cmdparams
+statusCode=$(java -cp /openapi-generator-postman-v2.jar:/openapi-generator-cli.jar \
+  org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator $cmdparams)
+
+if [[ ! $statusCode ]]
+then
+  echo "Error during Postman generation"
+  exit 1
+fi
 
 output_file=$(find /usr/src/app -name "postman.json" | sort -nr | head -n 1)
 
