@@ -25,11 +25,13 @@ fi
 java -cp /openapi-generator-postman-v2.jar:/openapi-generator-cli.jar \
   org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator $cmdparams
 
+output_file=$(find /usr/src/app -name "postman.json" | sort -nr | head -n 1)
+
 if [[ $command == "push" ]]
 then
   echo "--> Pushing to Postman"
 
-  var=$(cat /usr/src/app/tmp/postman.json)
+  var=$(cat "$output_file")
 
   echo '{"collection": '"$var"' }' | curl -X POST \
   --header 'Content-Type: application/json' \
