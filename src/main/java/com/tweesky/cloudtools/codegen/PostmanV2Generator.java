@@ -20,8 +20,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   private final Logger LOGGER = LoggerFactory.getLogger(PostmanV2Generator.class);
 
-  // source folder where to write the files
-  protected String sourceFolder = "src";
   protected String apiVersion = "1.0.0";
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
   public static final String FOLDER_STRATEGY = "folderStrategy";
