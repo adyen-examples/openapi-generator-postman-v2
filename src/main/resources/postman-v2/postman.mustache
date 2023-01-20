@@ -9,9 +9,9 @@
 	{{#entrySet}}
 	        {
 	            "name": "{{key}}",
-	            "item": [
-	            {{#value}}{{>item}}{{^-last}},{{/-last}}{{/value}}
-	            ]
+	            "item": [{{#value}}
+	                        {{>item}}{{^-last}},{{/-last}}{{/value}}
+	                    ]
 	        }{{^-last}},{{/-last}}
 	{{/entrySet}}
     {{/codegenOperationsByTag}}
