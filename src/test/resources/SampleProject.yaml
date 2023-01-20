@@ -230,12 +230,8 @@ paths:
                 - email
                 - dateOfBirth
             examples:
-              Create User Bob Fellow:
-                value:
-                  firstName: Betty
-                  lastName: Reds
-                  email: betty.red@gmail.com
-                  dateOfBirth: '1996-08-24'
+                basic:
+                    $ref: '#/components/examples/get-user-basic'
         description: Post the necessary fields for the API to create a new user.
       description: Create a new user.
       tags:
