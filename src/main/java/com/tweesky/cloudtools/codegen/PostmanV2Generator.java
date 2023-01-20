@@ -24,8 +24,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
   public static final String FOLDER_STRATEGY = "folderStrategy";
   public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Paths";
+  // Select whether to create Postman variables for path templates
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;
+  
   public static final String POSTMAN_FILE_DEFAULT_VALUE = "postman.json";
 
   public static final String POSTMAN_VARIABLES = "postmanVariables";
@@ -36,8 +38,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   protected String folderStrategy = FOLDER_STRATEGY_DEFAULT_VALUE; // values: Paths | Tags
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE; // values: true | false
 
+  // Output file
   protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
 
+  // Select whether to generate requests/responses from Example or Schema
   protected String requestParameterGeneration = REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE; // values: Example, Schema
 
   Set<PostmanVariable> variables = new HashSet<>();
