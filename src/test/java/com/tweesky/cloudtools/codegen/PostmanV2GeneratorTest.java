@@ -1,6 +1,7 @@
 package com.tweesky.cloudtools.codegen;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -234,7 +236,8 @@ public class PostmanV2GeneratorTest {
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
     // verify response body comes from components/examples
-    TestUtils.assertFileContains(path, "\"body\": \"{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"Alotta\\\",\\n \\\"lastName\\\": \\\"Rotta\\\",\\n ");
+    TestUtils.assertFileContains(path, "\"name\": \"Example request for Get User\"");
+    TestUtils.assertFileContains(path, "\"raw\": \"{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"Alotta\\\",\\n \\\"lastName\\\": \\\"Rotta\\\",\\n ");
   }
 
   @Test
@@ -245,7 +248,6 @@ public class PostmanV2GeneratorTest {
 
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
-            .addAdditionalProperty(PostmanV2Generator.NAMING_REQUESTS, "URL")
             .setInputSpec("./src/test/resources/SampleProject.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
@@ -353,9 +355,13 @@ public class PostmanV2GeneratorTest {
     PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
     postmanV2Generator.postmanVariableNames = new String[]{"MY_VAR_1", "MY_VAR_2"};
 
-    String newRequestBody = postmanV2Generator.createPostmanVariables(STR);
+    List<PostmanRequestItem> requestItems = new ArrayList<>();
+    requestItems.add(new PostmanRequestItem("get by id", STR));
 
-    assertEquals(EXPECTED, newRequestBody);
+    requestItems = postmanV2Generator.createPostmanVariables(requestItems);
+
+    assertEquals(1, requestItems.size());
+    assertEquals(EXPECTED, requestItems.get(0).getBody());
     assertEquals(2, postmanV2Generator.variables.size());
   }
 
