@@ -299,12 +299,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       // operation with bodyParam
       if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
         // get from schema
-        items.add(new PostmanRequestItem("fromBodyParam", new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
+        items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
       } else {
         // get from examples
         if (codegenOperation.bodyParam.example != null) {
           // find in bodyParam example
-          items.add(new PostmanRequestItem("fromBodyExample", new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example)));
+          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example)));
         } else if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
                 codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
           // find in components/examples
@@ -318,10 +318,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
           String exampleAsString = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.getSchema().getExample());
-          items.add(new PostmanRequestItem("fromSchemaExample", exampleAsString));
+          items.add(new PostmanRequestItem(codegenOperation.summary, exampleAsString));
         } else {
           // example not found
-          items.add(new PostmanRequestItem(codegenOperation.summary, ""));
+          // get from schema
+          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
+
         }
       }
     } else {
