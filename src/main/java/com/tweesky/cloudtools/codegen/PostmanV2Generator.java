@@ -1,5 +1,6 @@
 package com.tweesky.cloudtools.codegen;
 
+import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.servers.ServerVariable;
@@ -28,8 +29,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;
   public static final String POSTMAN_FILE_DEFAULT_VALUE = "postman.json";
-  public static final String NAMING_REQUESTS = "namingRequests";
-  public static final String NAMING_REQUESTS_DEFAULT_VALUE = "Fallback";
 
   public static final String POSTMAN_VARIABLES = "postmanVariables";
 
@@ -40,7 +39,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   protected Boolean pathParamsAsVariables = PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE; // values: true | false
 
   protected String postmanFile = POSTMAN_FILE_DEFAULT_VALUE;
-  protected String namingRequests= NAMING_REQUESTS_DEFAULT_VALUE; // values: Fallback | URL
 
   protected String requestParameterGeneration = REQUEST_PARAMETER_GENERATION_DEFAULT_VALUE; // values: Example, Schema
 
@@ -77,7 +75,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     cliOptions.add(CliOption.newString(FOLDER_STRATEGY, "whether to create folders according to the spec’s paths or tags"));
     cliOptions.add(CliOption.newBoolean(PATH_PARAMS_AS_VARIABLES, "whether to create Postman variables for path parameters"));
-    cliOptions.add(CliOption.newString(NAMING_REQUESTS, "how the requests inside the generated collection will be named (Fallback or URL)"));
     cliOptions.add(CliOption.newString(POSTMAN_VARIABLES, "list of Postman variables to create"));
     cliOptions.add(CliOption.newString(REQUEST_PARAMETER_GENERATION, "whether to generate the request parameters based on the schema or the examples"));
 
@@ -140,10 +137,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       pathParamsAsVariables = Boolean.parseBoolean(additionalProperties.get(PATH_PARAMS_AS_VARIABLES).toString());
     }
 
-    if(additionalProperties.containsKey(NAMING_REQUESTS)) {
-      namingRequests = additionalProperties().get(NAMING_REQUESTS).toString();
-    }
-
     if(additionalProperties().containsKey(REQUEST_PARAMETER_GENERATION)) {
       requestParameterGeneration = additionalProperties().get(REQUEST_PARAMETER_GENERATION).toString();
     }
@@ -181,17 +174,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         codegenOperation.path = doubleCurlyBraces(codegenOperation.path);
       }
 
-      if(namingRequests.equalsIgnoreCase("url")) {
-        codegenOperation.summary = codegenOperation.path;
-      } else {
-        if(codegenOperation.summary == null) {
-          if(codegenOperation.operationId == null) {
-            codegenOperation.summary = codegenOperation.path;
-          } else {
-            codegenOperation.summary = codegenOperation.operationId;
-          }
-        }
-      }
+      codegenOperation.summary = getSummary(codegenOperation);
 
       // request headers
       if(codegenOperation.produces != null && codegenOperation.produces.get(0) != null) {
@@ -221,17 +204,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       codegenOperation.vendorExtensions.put("pathSegments", pathSegments);
       codegenOperation.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
-      // set request body
-      String requestBody = getRequestBody(codegenOperation);
-      if(requestBody != null) {
-
+      List<PostmanRequestItem> postmanRequests = getPostmanRequests(codegenOperation);
+      if(postmanRequests != null) {
         if(isCreatePostmanVariables()) {
-          requestBody = createPostmanVariables(requestBody);
+          postmanRequests = createPostmanVariables(postmanRequests);
         }
-        codegenOperation.vendorExtensions.put("requestBody", requestBody);
-        codegenOperation.vendorExtensions.put("hasRequestBody", true);
-      } else {
-        codegenOperation.vendorExtensions.put("hasRequestBody", false);
+        codegenOperation.vendorExtensions.put("postmanRequests", postmanRequests);
       }
 
       // set all available responses
@@ -239,22 +217,19 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
         codegenResponse.vendorExtensions.put("status", getStatus(codegenResponse));
 
-        if(requestBody != null) {
-          // re-use request body for each response
-          codegenResponse.vendorExtensions.put("requestBody", requestBody);
-          codegenResponse.vendorExtensions.put("hasRequestBody", true);
+//        TODO: set response for each request
+//        if(postmanRequests != null) {
+//          // re-use request body for each response
+//          codegenResponse.vendorExtensions.put("requestBody", postmanRequests);
+//        }
+//        String responseBody = getResponseBody(codegenResponse);
+//        if(responseBody != null) {
+//          codegenResponse.vendorExtensions.put("responseBody", responseBody);
+//          codegenResponse.vendorExtensions.put("hasResponseBody", true);
+//        } else {
+//          codegenResponse.vendorExtensions.put("hasResponseBody", false);
+//        }
 
-        } else {
-          codegenResponse.vendorExtensions.put("hasRequestBody", false);
-        }
-
-        String responseBody = getResponseBody(codegenResponse);
-        if(responseBody != null) {
-          codegenResponse.vendorExtensions.put("responseBody", responseBody);
-          codegenResponse.vendorExtensions.put("hasResponseBody", true);
-        } else {
-          codegenResponse.vendorExtensions.put("hasResponseBody", false);
-        }
       }
 
       if(folderStrategy.equalsIgnoreCase("tags")) {
@@ -267,6 +242,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     return results;
   }
+
 
   void addToMap(CodegenOperation codegenOperation){
 
@@ -315,33 +291,45 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return responseBody;
   }
 
-  String getRequestBody(CodegenOperation codegenOperation) {
-    String requestBody = null;
+  // from OpenAPI operation to n Postman requests
+  List<PostmanRequestItem> getPostmanRequests(CodegenOperation codegenOperation) {
+    List<PostmanRequestItem> items = new ArrayList<>();
 
     if(codegenOperation.getHasBodyParam()) {
+      // operation with bodyParam
       if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
         // get from schema
-        requestBody = new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam);
+        items.add(new PostmanRequestItem("fromBodyParam", new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
       } else {
         // get from examples
         if (codegenOperation.bodyParam.example != null) {
           // find in bodyParam example
-          requestBody = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example);
+          items.add(new PostmanRequestItem("fromBodyExample", new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example)));
         } else if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
                 codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
           // find in components/examples
-          String exampleRef = codegenOperation.bodyParam.getContent().get("application/json").getExamples()
-                  .values().iterator().next().get$ref();
-          Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
-          requestBody = new ExampleJsonHelper().getJsonFromExample(example);
+          for (Map.Entry<String, Example> entry : codegenOperation.bodyParam.getContent().get("application/json").getExamples().entrySet()) {
+            String exampleRef = entry.getValue().get$ref();
+            Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
+            String exampleAsString = new ExampleJsonHelper().getJsonFromExample(example);
+
+            items.add(new PostmanRequestItem(example.getSummary(), exampleAsString));
+          }
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
-          requestBody = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.getSchema().getExample());
+          String exampleAsString = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.getSchema().getExample());
+          items.add(new PostmanRequestItem("fromSchemaExample", exampleAsString));
+        } else {
+          // example not found
+          items.add(new PostmanRequestItem(codegenOperation.summary, ""));
         }
       }
+    } else {
+      // operation without bodyParam
+      items.add(new PostmanRequestItem(codegenOperation.summary, ""));
     }
 
-    return requestBody;
+    return items;
   }
 
   // split, trim
@@ -352,10 +340,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   boolean isCreatePostmanVariables() {
     return postmanVariableNames != null;
   }
-  String createPostmanVariables(String requestBody) {
+  List<PostmanRequestItem> createPostmanVariables(List<PostmanRequestItem> postmanRequests) {
 
     for (String var : postmanVariableNames) {
-      requestBody = requestBody.replace(var, "{{" + var + "}}");
+      for(PostmanRequestItem requestItem : postmanRequests) {
+        requestItem.setBody(requestItem.getBody().replace(var, "{{" + var + "}}"));
+      }
 
       variables.add(new PostmanVariable()
               .addName(var)
@@ -363,7 +353,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
               .addExample(""));
     }
 
-    return requestBody;
+    return postmanRequests;
   }
 
   /**
@@ -499,6 +489,20 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       }
     }
 
+    return ret;
+  }
+
+  // make sure operation name is always set
+  String getSummary(CodegenOperation codegenOperation) {
+    String ret = null;
+
+    if(codegenOperation.summary != null) {
+      ret = codegenOperation.summary;
+    } else if (codegenOperation.operationId != null) {
+      ret = codegenOperation.operationId;
+    } else {
+      ret = codegenOperation.httpMethod;
+    }
     return ret;
   }
 }

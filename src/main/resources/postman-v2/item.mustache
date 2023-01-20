@@ -1,105 +1,60 @@
-    {
-        "name": "{{summary}}",
-        "request": {
-            "method": "{{httpMethod}}",
-            "header": [
-            {{#headerParams}}
-                {
-                    "key": "{{paramName}}",
-                    "value": "{{schema.defaultValue}}"
-                }{{^-last}},{{/-last}}
-            {{/headerParams}}
-            ],{{#vendorExtensions.hasRequestBody}}
-            "body": {
-                "mode": "raw",
-                "raw": "{{{vendorExtensions.requestBody}}}",
-                "options": {
-                    "raw": {
-                        "language": "json"
-                    }
-                }
-            },{{/vendorExtensions.hasRequestBody}}
-            "url": {
-                "raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
-                "host": [
-                    "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
-                ],
-                "path": [
-                    {{#vendorExtensions.pathSegments}}
-                    "{{.}}"{{^-last}},{{/-last}}
-                    {{/vendorExtensions.pathSegments}}
-                ],
-                "variable": [
-                    {{#pathParams}}
-                    {
-                        "key": "{{paramName}}",
-                        "value": "",
-                        "description": "{{description}}"
-                    }{{^-last}},{{/-last}}
-                {{/pathParams}}
-                ],
-                "query": [
-                    {{#queryParams}}
-                    {
-                        "key": "{{paramName}}",
-                        "value": "{{example}}"
-                    }{{^-last}},{{/-last}}
-                    {{/queryParams}}
-                ]
-            },
-            "description": "{{notes}}"
-        },
-        "response": [
-            {{#responses}}
-            {
-                "name": "{{message}}",
-                "originalRequest": {
-                    "method": "{{httpMethod}}",
-                    "header": [],{{#vendorExtensions.hasRequestBody}}
-                    "body": {
-                        "mode": "raw",
-                        "raw": "{{{vendorExtensions.requestBody}}}",
-                        "options": {
-                            "raw": {
-                                "language": "json"
-                            }
-                        }
-                    },{{/vendorExtensions.hasRequestBody}}
-                    "url": {
-                        "raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
-                        "host": [
-                            "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
-                        ],
-                        "path": [
-                            {{#vendorExtensions.pathSegments}}
-                            "{{.}}"{{^-last}},{{/-last}}
-                            {{/vendorExtensions.pathSegments}}
-                        ],
-                        "variable": [
-                            {{#pathParams}}
+{
+    "name": "{{path}}",
+                "description": "{{notes}}",
+                 "item": [
+                        {{#vendorExtensions.postmanRequests}}
                             {
-                                "key": "{{paramName}}",
-                                "value": "",
-                                "description": "{{description}}"
+                                "name": "{{name}}",
+                                "request": {
+                                    "method": "{{httpMethod}}",
+                                    "header": [
+                                    {{#headerParams}}
+                                        {
+                                            "key": "{{paramName}}",
+                                            "value": "{{schema.defaultValue}}"
+                                        }{{^-last}},{{/-last}}
+                                    {{/headerParams}}
+                                    ],
+                                    "body": {
+                                        "mode": "raw",
+                                        "raw": "{{{body}}}",
+                                        "options": {
+                                            "raw": {
+                                                "language": "json"
+                                            }
+                                        }
+                                    },
+                                    "url": {
+                                        "raw": "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>{{path}}",
+                                        "host": [
+                                            "{{=<% %>=}}{{baseUrl}}<%={{ }}=%>"
+                                        ],
+                                        "path": [
+                                            {{#vendorExtensions.pathSegments}}
+                                            "{{.}}"{{^-last}},{{/-last}}
+                                            {{/vendorExtensions.pathSegments}}
+                                        ],
+                                        "variable": [
+                                            {{#pathParams}}
+                                            {
+                                                "key": "{{paramName}}",
+                                                "value": "",
+                                                "description": "{{description}}"
+                                            }{{^-last}},{{/-last}}
+                                        {{/pathParams}}
+                                        ],
+                                        "query": [
+                                            {{#queryParams}}
+                                            {
+                                                "key": "{{paramName}}",
+                                                "value": "{{example}}"
+                                            }{{^-last}},{{/-last}}
+                                            {{/queryParams}}
+                                        ]
+                                    },
+                                    "description": "{{notes}}"
+                                }
                             }{{^-last}},{{/-last}}
-                        {{/pathParams}}
-                        ]
-                    }
-                },
-                "status": "{{#vendorExtensions.status}}{{.}}{{/vendorExtensions.status}}",
-                "code": {{code}},
-                "_postman_previewlanguage": "json",
-                "header": [
-                    {{#headers}}
-                    {
-                        "key": "{{name}}",
-                        "value": "{{schema.defaultValue}}"
-                    }{{^-last}},{{/-last}}
-                    {{/headers}}
-                ],
-                "cookie": [],
-                "body": {{#vendorExtensions.hasResponseBody}}"{{{vendorExtensions.responseBody}}}"{{/vendorExtensions.hasResponseBody}}{{^vendorExtensions.hasResponseBody}}""{{/vendorExtensions.hasResponseBody}}
-            }{{^-last}},{{/-last}}
-            {{/responses}}
-        ]
-    }
+                        {{/vendorExtensions.postmanRequests}}
+                            ]
+                        }
