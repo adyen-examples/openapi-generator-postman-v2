@@ -23,7 +23,7 @@
         {{>item}}{{^-last}},{{/-last}}
 	{{/codegenOperationsList}}
     ],
-    {{#authMethods}}{{#isApiKey}}"auth": {
+    {{#authMethods}}{{#-first}}{{#isApiKey}}"auth": {
     		"type": "apikey",
     		"apikey": [
     			{
@@ -37,7 +37,21 @@
     				"type": "string"
     			}
     		]
-    	},{{/isApiKey}}{{/authMethods}}
+    	},{{/isApiKey}}{{#isBasic}}"auth": {
+            		"type": "basic",
+            		"basic": [
+            			{
+            				"key": "username",
+            				"value": "{{=<% %>=}}{{<%={{ }}=%>USERNAME{{=<% %>=}}}}<%={{ }}=%>",
+            				"type": "string"
+            			},
+            			{
+            				"key": "password",
+            				"value": "{{=<% %>=}}{{<%={{ }}=%>PASSWORD{{=<% %>=}}}}<%={{ }}=%>",
+            				"type": "string"
+            			}
+            		]
+            	},{{/isBasic}}{{/-first}}{{/authMethods}}
 	"variable": [{{#servers}}{{#-first}}
 		{
 			"key": "baseUrl",

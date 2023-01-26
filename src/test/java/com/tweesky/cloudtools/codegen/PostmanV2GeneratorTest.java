@@ -289,7 +289,7 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  public void testApiKeyIsFound() throws IOException, ParseException {
+  public void testSecuritySchemes() throws IOException, ParseException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
     output.deleteOnExit();
@@ -310,6 +310,8 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileExists(path);
     // check auth apiKey
     TestUtils.assertFileContains(path, "\"auth\": { \"type\": \"apikey\", \"apikey\": [");
+    // check auth basic NOT found
+    TestUtils.assertFileNotContains(path, "\"auth\": { \"type\": \"basic\", \"basic\": [");
   }
 
 
@@ -373,4 +375,5 @@ public class PostmanV2GeneratorTest {
     assertEquals("number", new PostmanV2Generator().mapToPostmanType("integer"));
     assertEquals("any", new PostmanV2Generator().mapToPostmanType("object"));
   }
+
 }
