@@ -10,8 +10,7 @@ FROM adoptopenjdk:11-jre-hotspot
 
 WORKDIR /usr/src/app
 
-COPY --from=build tmp/openapi-generator-cli.jar /openapi-generator-cli.jar
-COPY --from=build target/openapi-generator-postman-v2.jar /openapi-generator-postman-v2.jar
+COPY --from=build target/openapi-generator-postman-v2-jar-with-dependencies.jar /openapi-generator-postman-v2-jar-with-dependencies.jar
 
 COPY --from=build  ./script.sh /
 RUN chmod +x /script.sh
