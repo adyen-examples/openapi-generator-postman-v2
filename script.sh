@@ -22,8 +22,7 @@ then
     cmdparams="${cmdline#*push}"
 fi
 
-statusCode=$(java -cp /openapi-generator-postman-v2-jar-with-dependencies.jar \
-  org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator $cmdparams)
+statusCode=$(java -jar /openapi-generator-postman-v2.jar generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator $cmdparams)
 
 if [[ ! $statusCode ]]
 then
