@@ -60,6 +60,24 @@ public class ExampleJsonHelperTest {
     }
 
     @Test
+    public void formatJsonIncludingCommas() {
+
+        final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"list\\\": \\\"AMS,LON,ROM\\\"\\n}";
+        final String JSON = "{\"id\":1,\"list\":\"AMS,LON,ROM\"}";
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().formatJson(JSON));
+
+    }
+
+    @Test
+    public void getAttributesFromJson() {
+
+        final String JSON = "{\"id\":1,\"list\":\"AMS,LON,ROM\"}";
+        assertEquals(2, new ExampleJsonHelper().getAttributes(JSON).length);
+
+    }
+
+    @Test
     public void convertObjectNodeToJson() {
 
         final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";
