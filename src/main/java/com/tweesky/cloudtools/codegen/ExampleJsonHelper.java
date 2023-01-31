@@ -7,8 +7,10 @@ import org.openapitools.codegen.CodegenProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Extract and format JSON examples
@@ -64,18 +66,21 @@ public class ExampleJsonHelper {
     }
 
     String formatJson(String json) {
-        String ret = json;
 
         // unescape double quotes already escaped
-        ret = ret.replace("\\\"", "\"");
+        json = json.replace("\\\"", "\"");
 
-        ret = ret.replace("{", "{" + JSON_ESCAPE_NEW_LINE + " ");
-        ret = ret.replace("}", JSON_ESCAPE_NEW_LINE + "}");
-        ret = ret.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
-        ret = ret.replace(":", ": ");
-        ret = ret.replace(",", "," + JSON_ESCAPE_NEW_LINE + " ");
+        json = json.replace("{", "{" + JSON_ESCAPE_NEW_LINE + " ");
+        json = json.replace("}", JSON_ESCAPE_NEW_LINE + "}");
+        json = json.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
+        json = json.replace(":", ": ");
 
-        return ret;
+        return Arrays.stream(getAttributes(json)).sequential().collect(Collectors.joining("," + JSON_ESCAPE_NEW_LINE + " "));
+    }
+
+    // array of attributes from JSON payload (ignore commas within quotes)
+    String[] getAttributes(String json) {
+        return json.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
     }
 
     String convertToJson(ObjectNode objectNode) {
