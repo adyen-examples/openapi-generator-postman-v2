@@ -109,7 +109,7 @@ components:
         email: alotta.rotta@gmail.com
         dateOfBirth: '1997-10-31'
         emailVerified: true
-        createDate: '2019-08-24'
+        createDate: RANDOM_VALUE
 
 tags:
   - name: basic
