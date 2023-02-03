@@ -31,11 +31,11 @@ public class PostmanV2GeneratorTest {
     final PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
     postmanV2Generator.processOpts();
 
-    Assert.assertEquals(postmanV2Generator.folderStrategy, "Paths");
+    Assert.assertEquals(postmanV2Generator.folderStrategy, "Tags");
     Assert.assertEquals(postmanV2Generator.postmanFile, "postman.json");
 
-    Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsList"));
-    Assert.assertNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
+    Assert.assertNull(postmanV2Generator.additionalProperties().get("codegenOperationsList"));
+    Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
   }
   @Test
   public void testConfigWithFolderStrategyTags() throws Exception {
