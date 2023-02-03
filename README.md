@@ -73,9 +73,10 @@ java -cp target/openapi-generator-postman-v2.jar:/openapi-generator/modules/open
 ## CONFIG OPTIONS
 These options may be applied as additional-properties (cli) or configOptions (plugins). 
 
-| Option | Description                                                                                                                                                                                 | Values          | Default      |
-| ------ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|--------------|
-|folderStrategy| whether to create folders according to the spec’s paths or tags                                                                                                                             | Paths, Tags     | Paths        |
-|pathParamsAsVariables| boolean, whether to create Postman variables for path parameters                                                                                                                            | true, false     | true         |
-|postmanVariables| kebab-case list of Postman variables (i.e VAR1-VAR2-VAR3) to be created during the generation. Matching placeholders in request bodies will be defined as Postman variables                 |                 |       |
-|requestParameterGeneration| whether to generate the request parameters based on the schema or the examples                                                                                                              | Example, Schema | Example      |
+| Option                     | Description                                                                                                                                                                 | Values          | Default      |
+|----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|--------------|
+| folderStrategy             | whether to create folders according to the spec’s paths or tags                                                                                                             | Paths, Tags     | Paths        |
+| pathParamsAsVariables      | boolean, whether to create Postman variables for path parameters                                                                                                            | true, false     | true         |
+| postmanVariables           | kebab-case list of Postman variables (i.e VAR1-VAR2-VAR3) to be created during the generation. Matching placeholders in request bodies will be defined as Postman variables |                 |       |
+| generatedVariables         | kebab-case list of auto-generated variables (i.e VAR1-VAR2-VAR3). Matching placeholders in request bodies will be replaced with `{{$guid}}` Postman formula                 |                 |       |
+| requestParameterGeneration | whether to generate the request parameters based on the schema or the examples                                                                                              | Example, Schema | Example      |
