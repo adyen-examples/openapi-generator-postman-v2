@@ -251,8 +251,9 @@ public class PostmanV2GeneratorTest {
             .setInputSpec("./src/test/resources/SampleProject.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
     DefaultGenerator generator = new DefaultGenerator();
-    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+    List<File> files = generator.opts(clientOptInput).generate();
 
     System.out.println(files);
     files.forEach(File::deleteOnExit);
@@ -400,5 +401,27 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileContains(path, "\\\"acceptHeader\\\": \\\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\\\"");
   }
 
+  @Test
+  public void testDeprecatedEndpoint() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    // verify request name (from path)
+    TestUtils.assertFileContains(path, "(DEPRECATED)");
+  }
 
 }
