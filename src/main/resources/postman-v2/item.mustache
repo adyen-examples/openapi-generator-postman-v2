@@ -1,6 +1,6 @@
 {
     "name": "{{path}}{{#isDeprecated}} (DEPRECATED){{/isDeprecated}}",
-                "description": "{{notes}}",
+                "description": "{{{notes}}}",
                  "item": [
                         {{#vendorExtensions.postmanRequests}}
                             {
@@ -52,7 +52,7 @@
                                             {{/queryParams}}
                                         ]
                                     },
-                                    "description": "{{notes}}"
+                                    "description": "{{{notes}}}"
                                 }
                             }{{^-last}},{{/-last}}
                         {{/vendorExtensions.postmanRequests}}
