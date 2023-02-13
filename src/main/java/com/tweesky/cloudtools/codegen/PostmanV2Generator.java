@@ -23,7 +23,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   protected String apiVersion = "1.0.0";
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
   public static final String FOLDER_STRATEGY = "folderStrategy";
-  public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Paths";
+  public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Tags";
   // Select whether to create Postman variables for path templates
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = true;

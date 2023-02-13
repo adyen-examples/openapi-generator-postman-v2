@@ -31,11 +31,11 @@ public class PostmanV2GeneratorTest {
     final PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
     postmanV2Generator.processOpts();
 
-    Assert.assertEquals(postmanV2Generator.folderStrategy, "Paths");
+    Assert.assertEquals(postmanV2Generator.folderStrategy, "Tags");
     Assert.assertEquals(postmanV2Generator.postmanFile, "postman.json");
 
-    Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsList"));
-    Assert.assertNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
+    Assert.assertNull(postmanV2Generator.additionalProperties().get("codegenOperationsList"));
+    Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
   }
   @Test
   public void testConfigWithFolderStrategyTags() throws Exception {
@@ -251,8 +251,9 @@ public class PostmanV2GeneratorTest {
             .setInputSpec("./src/test/resources/SampleProject.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
     DefaultGenerator generator = new DefaultGenerator();
-    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+    List<File> files = generator.opts(clientOptInput).generate();
 
     System.out.println(files);
     files.forEach(File::deleteOnExit);
@@ -401,29 +402,26 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  public void testGeneratedVariables() throws IOException, ParseException {
+  public void testDeprecatedEndpoint() throws IOException, ParseException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
     output.deleteOnExit();
 
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
-            .setInputSpec("./src/test/resources/BasicVariablesInExample.yaml")
-            .addAdditionalProperty(PostmanV2Generator.GENERATED_VARIABLES, "RANDOM_VALUE ")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
-    final ClientOptInput clientOptInput = configurator.toClientOptInput();
     DefaultGenerator generator = new DefaultGenerator();
-    List<File> files = generator.opts(clientOptInput).generate();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
 
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
-
-    TestUtils.assertFileContains(path, "\\\"createDate\\\": \\\"{{$guid}}\\\"");
-
+    // verify request name (from path)
+    TestUtils.assertFileContains(path, "(DEPRECATED)");
   }
 
 }
