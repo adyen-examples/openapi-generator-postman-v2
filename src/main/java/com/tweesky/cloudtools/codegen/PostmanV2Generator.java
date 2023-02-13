@@ -368,13 +368,16 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     for (String var : postmanVariableNames) {
       for(PostmanRequestItem requestItem : postmanRequests) {
-        requestItem.setBody(requestItem.getBody().replace(var, "{{" + var + "}}"));
-      }
+        if (requestItem.getBody().indexOf(var) > 0) {
 
-      variables.add(new PostmanVariable()
-              .addName(var)
-              .addType("string")
-              .addExample(""));
+          requestItem.setBody(requestItem.getBody().replace(var, "{{" + var + "}}"));
+
+          variables.add(new PostmanVariable()
+                  .addName(var)
+                  .addType("string")
+                  .addExample(""));
+        }
+      }
     }
 
     return postmanRequests;
