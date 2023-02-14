@@ -190,6 +190,36 @@ public class PostmanV2GeneratorTest {
 
   }
   @Test
+  public void testVariableThatDoesNotExist() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/BasicVariablesInExample.yaml")
+            .addAdditionalProperty(PostmanV2Generator.POSTMAN_VARIABLES, "NOT_FOUND_VARIABLE")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+
+    JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
+    // verify json has 2 variables only
+    assertTrue(jsonObject.get("variable") instanceof JSONArray);
+    assertEquals(2, ((JSONArray) jsonObject.get("variable")).size());
+
+    TestUtils.assertFileNotContains(path, "{{NOT_FOUND_VAR}}");
+
+  }
+  @Test
   public void testGenerateWithoutPathParamsVariables() throws IOException, ParseException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
