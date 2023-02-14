@@ -156,7 +156,7 @@ public class PostmanV2GeneratorTest {
     JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
     // verify json has variables
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
+    assertEquals(5, ((JSONArray) jsonObject.get("variable")).size());
   }
 
   @Test
@@ -242,7 +242,7 @@ public class PostmanV2GeneratorTest {
     JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
     // verify json has only Server variables (baseUrl, etc..)
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(3, ((JSONArray) jsonObject.get("variable")).size());
+    assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
   }
 
   @Test
