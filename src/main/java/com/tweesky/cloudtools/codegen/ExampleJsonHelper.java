@@ -12,17 +12,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.tweesky.cloudtools.codegen.PostmanV2Generator.JSON_ESCAPE_DOUBLE_QUOTE;
+import static com.tweesky.cloudtools.codegen.PostmanV2Generator.JSON_ESCAPE_NEW_LINE;
+
 /**
  * Extract and format JSON examples
  */
 public class ExampleJsonHelper {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ExampleJsonHelper.class);
-
-
-    public static final String JSON_ESCAPE_DOUBLE_QUOTE = "\\\"";
-    public static final String JSON_ESCAPE_NEW_LINE = "\\n";
-
 
     // generate JSON (string) escaping and formatting
     String getJsonFromSchema(CodegenParameter codegenParameter) {
