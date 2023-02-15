@@ -57,7 +57,12 @@
 			"key": "baseUrl",
 			"value": "{{url}}",
 			"type": "string"
-		}{{/-first}}{{/servers}}{{#apiInfo}}{{#apis}}{{#vendorExtensions}}{{#-first}}{{#variables}}{{#-first}},{{/-first}}
+        }{{/-first}}{{/servers}}{{#authMethods}}{{#isApiKey}},
+        {
+            "key": "{{keyParamName}}",
+            "value": "",
+            "type": "string"
+        }{{/isApiKey}}{{/authMethods}}{{#apiInfo}}{{#apis}}{{#vendorExtensions}}{{#-first}}{{#variables}}{{#-first}},{{/-first}}
 		{
 	        {{! use first element in vendorExtensions }}
 			"key": "{{name}}",
