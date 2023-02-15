@@ -37,6 +37,7 @@ public class PostmanV2GeneratorTest {
     Assert.assertNull(postmanV2Generator.additionalProperties().get("codegenOperationsList"));
     Assert.assertNotNull(postmanV2Generator.additionalProperties().get("codegenOperationsByTag"));
   }
+
   @Test
   public void testConfigWithFolderStrategyTags() throws Exception {
     final PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
@@ -478,6 +479,15 @@ public class PostmanV2GeneratorTest {
 
     TestUtils.assertFileContains(path, "\\\"createDate\\\": \\\"{{$guid}}\\\"");
 
+  }
+
+  @Test
+  public void testFormatDescription() throws Exception {
+
+    final String DESCRIPTION = "## Description \n\n Text with markdown \n";
+    final String EXPECTED = "## Description \\n\\n Text with markdown \\n";
+
+    assertEquals(EXPECTED, new PostmanV2Generator().formatDescription(DESCRIPTION));
   }
 
 }

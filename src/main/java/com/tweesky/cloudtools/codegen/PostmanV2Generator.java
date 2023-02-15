@@ -2,6 +2,7 @@ package com.tweesky.cloudtools.codegen;
 
 import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import org.openapitools.codegen.*;
@@ -50,6 +51,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   Set<PostmanVariable> variables = new HashSet<>();
   String[] postmanVariableNames = null;
   String[] generatedVariableNames = null;
+
+  public static final String JSON_ESCAPE_DOUBLE_QUOTE = "\\\"";
+  public static final String JSON_ESCAPE_NEW_LINE = "\\n";
+
 
   // operations grouped by tag
   protected Map<String, List<CodegenOperation>> codegenOperationsByTag = new HashMap<>();
@@ -120,6 +125,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   }
 
   @Override
+  public void preprocessOpenAPI(OpenAPI openAPI) {
+    super.preprocessOpenAPI(openAPI);
+    this.additionalProperties().put("formattedDescription", formatDescription(openAPI.getInfo().getDescription()));
+  }
+
+  @Override
   public List<CodegenServerVariable> fromServerVariables(Map<String, ServerVariable> variables) {
 
     if(variables != null){
@@ -169,6 +180,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     }
 
   }
+
   /**
    * Process and modify operations before generating code
    */
@@ -541,5 +553,18 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       ret = codegenOperation.httpMethod;
     }
     return ret;
+  }
+
+  /**
+   * Format text to include in JSON file
+   * @param description
+   * @return
+   */
+  String formatDescription(String description) {
+
+    description = description.replace("\n", JSON_ESCAPE_NEW_LINE);
+    description = description.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
+
+    return description;
   }
 }
