@@ -340,10 +340,10 @@ public class PostmanV2GeneratorTest {
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
-    // check auth apiKey
-    TestUtils.assertFileContains(path, "\"auth\": { \"type\": \"apikey\", \"apikey\": [");
-    // check auth basic NOT found
-    TestUtils.assertFileNotContains(path, "\"auth\": { \"type\": \"basic\", \"basic\": [");
+    // check auth basic (1st security scheme in OpenAPI file)
+    TestUtils.assertFileContains(path, "\"auth\": { \"type\": \"basic\", \"basic\": [");
+    // check auth apiKey NOT found
+    TestUtils.assertFileNotContains(path, "\"auth\": { \"type\": \"apikey\", \"apikey\": [");
   }
 
 
