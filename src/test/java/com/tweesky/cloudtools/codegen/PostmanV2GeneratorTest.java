@@ -346,14 +346,6 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileNotContains(path, "\"auth\": { \"type\": \"apikey\", \"apikey\": [");
   }
 
-
-  @Test
-  public void extractVariables() {
-    String str = "/api/{var}/archive";
-
-    assertEquals(1, new PostmanV2Generator().extractVariables(str).size());
-  }
-
   @Test
   public void doubleCurlyBraces() {
     String str = "/api/{var}/archive";

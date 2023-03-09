@@ -450,20 +450,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return input.replace("\"", "\\\"");
   }
 
-  // extract template variable from string (ie /api/{var})
-  Set<String> extractVariables(String str) {
-    Set<String> variables = new HashSet<>();
-
-    Pattern p = Pattern.compile("\\{(.*?)\\}");
-    Matcher m = p.matcher(str);
-
-    while(m.find()) {
-      variables.add(m.group(1));
-    }
-
-    return variables;
-  }
-
   String doubleCurlyBraces(String str) {
 
     // remove doublebraces first
