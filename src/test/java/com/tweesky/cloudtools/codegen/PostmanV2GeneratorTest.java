@@ -268,7 +268,7 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileExists(path);
     // verify response body comes from components/examples
     TestUtils.assertFileContains(path, "\"name\": \"Example request for Get User\"");
-    TestUtils.assertFileContains(path, "\"raw\": \"{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"Alotta\\\",\\n \\\"lastName\\\": \\\"Rotta\\\",\\n ");
+    TestUtils.assertFileContains(path, "\"raw\": \"{\\n  \\\"id\\\" : 777,\\n  \\\"firstName\\\" : \\\"Alotta\\\",\\n  \\\"lastName\\\" : \\\"Rotta\\\",\\n ");
   }
 
   @Test
@@ -421,7 +421,7 @@ public class PostmanV2GeneratorTest {
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
     // check value with commas within quotes
-    TestUtils.assertFileContains(path, "\\\"acceptHeader\\\": \\\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\\\"");
+    TestUtils.assertFileContains(path, "\\\"acceptHeader\\\" : \\\"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\\\"");
   }
 
   @Test
@@ -469,7 +469,7 @@ public class PostmanV2GeneratorTest {
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
 
-    TestUtils.assertFileContains(path, "\\\"createDate\\\": \\\"{{$guid}}\\\"");
+    TestUtils.assertFileContains(path, "\\\"createDate\\\" : \\\"{{$guid}}\\\"");
 
   }
 

@@ -52,7 +52,7 @@ public class ExampleJsonHelperTest {
     @Test
     public void formatJson() {
 
-        final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";
+        final String EXPECTED = "{\\n  \\\"id\\\" : 1,\\n  \\\"city\\\" : \\\"Amsterdam\\\"\\n}";
         final String JSON = "{\"id\":1,\"city\":\"Amsterdam\"}";
 
         assertEquals(EXPECTED, new ExampleJsonHelper().formatJson(JSON));
@@ -62,8 +62,18 @@ public class ExampleJsonHelperTest {
     @Test
     public void formatJsonIncludingCommas() {
 
-        final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"list\\\": \\\"AMS,LON,ROM\\\"\\n}";
+        final String EXPECTED = "{\\n  \\\"id\\\" : 1,\\n  \\\"list\\\" : \\\"AMS,LON,ROM\\\"\\n}";
         final String JSON = "{\"id\":1,\"list\":\"AMS,LON,ROM\"}";
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().formatJson(JSON));
+
+    }
+
+    @Test
+    public void formatJsonWithUrl() {
+
+        final String EXPECTED = "{\\n  \\\"id\\\" : 1,\\n  \\\"url\\\" : \\\"https://github.com\\\"\\n}";
+        final String JSON = "{\"id\": 1,\"url\": \"https://github.com\"}";
 
         assertEquals(EXPECTED, new ExampleJsonHelper().formatJson(JSON));
 
@@ -80,7 +90,7 @@ public class ExampleJsonHelperTest {
     @Test
     public void convertObjectNodeToJson() {
 
-        final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\"\\n}";
+        final String EXPECTED = "{\\n  \\\"id\\\" : 1,\\n  \\\"city\\\" : \\\"Amsterdam\\\"\\n}";
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode city = mapper.createObjectNode();
@@ -95,7 +105,7 @@ public class ExampleJsonHelperTest {
     @Test
     public void convertObjectNodeIncludingDoubleQuoteToJson() {
 
-        final String EXPECTED = "{\\n \\\"id\\\": 1,\\n \\\"city\\\": \\\"it is \\\"Amsterdam\\\" \\\"\\n}";
+        final String EXPECTED = "{\\n  \\\"id\\\" : 1,\\n  \\\"city\\\" : \\\"it is \\\\\"Amsterdam\\\\\" \\\"\\n}";
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode city = mapper.createObjectNode();
