@@ -1,16 +1,18 @@
 package com.tweesky.cloudtools.codegen;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.examples.Example;
 import org.openapitools.codegen.CodegenParameter;
 import org.openapitools.codegen.CodegenProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.tweesky.cloudtools.codegen.PostmanV2Generator.JSON_ESCAPE_DOUBLE_QUOTE;
 import static com.tweesky.cloudtools.codegen.PostmanV2Generator.JSON_ESCAPE_NEW_LINE;
@@ -63,17 +65,23 @@ public class ExampleJsonHelper {
         return ret;
     }
 
-    String formatJson(String json) {
+    public String formatJson(String json) {
 
-        // unescape double quotes already escaped
-        json = json.replace("\\\"", "\"");
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        json = json.replace("{", "{" + JSON_ESCAPE_NEW_LINE + " ");
-        json = json.replace("}", JSON_ESCAPE_NEW_LINE + "}");
-        json = json.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
-        json = json.replace(":", ": ");
+        try {
+            // convert to JSON object and prettify
+            JsonNode actualObj = objectMapper.readTree(json);
+            json = Json.pretty(actualObj);
+            json = json.replace("\"", JSON_ESCAPE_DOUBLE_QUOTE);
+            json = json.replace("\n", JSON_ESCAPE_NEW_LINE);
 
-        return Arrays.stream(getAttributes(json)).sequential().collect(Collectors.joining("," + JSON_ESCAPE_NEW_LINE + " "));
+        } catch (JsonProcessingException e) {
+            LOGGER.warn("Error formatting JSON", e);
+            json = "";
+        }
+
+        return json;
     }
 
     // array of attributes from JSON payload (ignore commas within quotes)
