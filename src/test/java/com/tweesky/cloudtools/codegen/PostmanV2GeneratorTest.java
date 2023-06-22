@@ -347,6 +347,29 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
+  public void testHeaderParameter() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    // check auth basic (1st security scheme in OpenAPI file)
+    TestUtils.assertFileContains(path, "\"Custom-Header\"");
+  }
+
+  @Test
   public void doubleCurlyBraces() {
     String str = "/api/{var}/archive";
 
