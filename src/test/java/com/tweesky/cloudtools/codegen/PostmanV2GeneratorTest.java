@@ -347,7 +347,7 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  public void testHeaderParameter() throws IOException, ParseException {
+  public void testHeaderParameters() throws IOException, ParseException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
     output.deleteOnExit();
@@ -365,8 +365,9 @@ public class PostmanV2GeneratorTest {
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
-    // check auth basic (1st security scheme in OpenAPI file)
-    TestUtils.assertFileContains(path, "\"Custom-Header\"");
+    TestUtils.assertFileContains(path, "{ \"key\": \"Content-Type\", \"value\": \"application/json\"");
+    TestUtils.assertFileContains(path, "{ \"key\": \"Accept\", \"value\": \"application/json\"");
+    TestUtils.assertFileContains(path, "{ \"key\": \"Custom-Header\", \"value\": \"null\"");
   }
 
   @Test
