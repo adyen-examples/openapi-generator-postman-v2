@@ -4,6 +4,7 @@ import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
@@ -439,6 +440,24 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public String escapeUnsafeCharacters(String input) {
     //TODO: check that this logic is safe to escape unsafe characters to avoid code injection
     return input;
+  }
+
+  /**
+   * Return the default value of the property
+   * <p>
+   * Return null when the default is not defined
+   *
+   * @param schema Property schema
+   * @return string presentation of the default value of the property
+   */
+  @SuppressWarnings("static-method")
+  @Override
+  public String toDefaultValue(Schema schema) {
+    if (schema.getDefault() != null) {
+      return schema.getDefault().toString();
+    }
+
+    return null;
   }
 
   /**
