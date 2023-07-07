@@ -152,12 +152,19 @@ public class PostmanV2GeneratorTest {
     System.out.println(files);
     files.forEach(File::deleteOnExit);
 
-    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
 
     JSONObject jsonObject = (JSONObject) new JSONParser().parse(new FileReader(output + "/postman.json"));
     // verify json has variables
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
-    assertEquals(5, ((JSONArray) jsonObject.get("variable")).size());
+    assertEquals(6, ((JSONArray) jsonObject.get("variable")).size());
+    // verify param userId (without default value)
+    TestUtils.assertFileContains(path,
+            "key\": \"userId\", \"value\": \"\", \"type\": \"number\"");
+    // verify param groupId (with default value)
+    TestUtils.assertFileContains(path,
+            "key\": \"groupId\", \"value\": \"1\", \"type\": \"number\"");
   }
 
   @Test

@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * OpenAPI generator for Postman format v2.1
@@ -121,7 +119,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       variables.add(new PostmanVariable()
               .addName(parameter.paramName)
               .addType(mapToPostmanType(parameter.dataType))
-              .addExample(parameter.example));
+              .addDefaultValue(parameter.defaultValue));
     }
   }
 
@@ -138,7 +136,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       variables.entrySet().stream().forEach(serverVariableEntry -> this.variables.add(new PostmanVariable()
               .addName(serverVariableEntry.getKey())
               .addType("string")
-              .addExample(serverVariableEntry.getValue().getDefault())));
+              .addDefaultValue(serverVariableEntry.getValue().getDefault())));
     }
 
     return super.fromServerVariables(variables);
@@ -390,7 +388,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
           variables.add(new PostmanVariable()
                   .addName(var)
                   .addType("string")
-                  .addExample(""));
+                  .addDefaultValue(""));
         }
       }
     }
