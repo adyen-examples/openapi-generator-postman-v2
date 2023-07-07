@@ -333,7 +333,7 @@ components:
         - email
         - emailVerified
     Group:
-      title: Grouo
+      title: Group
       type: object
       description: ''
       properties:
