@@ -65,7 +65,7 @@ public class PostmanVariable {
         return "PostmanVariable{" +
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
-                ", example='" + defaultValue + '\'' +
+                ", defaultValue='" + defaultValue + '\'' +
                 '}';
     }
 }
