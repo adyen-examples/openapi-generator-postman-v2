@@ -6,7 +6,7 @@ public class PostmanVariable {
 
     private String name;
     private String type;
-    private String example;
+    private String defaultValue;
 
     public PostmanVariable addName(String name) {
         this.name = name;
@@ -18,8 +18,8 @@ public class PostmanVariable {
         return this;
     }
 
-    public PostmanVariable addExample(String example) {
-        this.example = example;
+    public PostmanVariable addDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
         return this;
     }
 
@@ -39,12 +39,12 @@ public class PostmanVariable {
         this.type = type;
     }
 
-    public String getExample() {
-        return example;
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
-    public void setExample(String example) {
-        this.example = example;
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class PostmanVariable {
         return "PostmanVariable{" +
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
-                ", example='" + example + '\'' +
+                ", example='" + defaultValue + '\'' +
                 '}';
     }
 }
