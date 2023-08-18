@@ -7,7 +7,7 @@ fi
 
 command=$1
 cmdline=$@
-echo "-->Executing [$command]"
+echo "-->Executing $command ($cmdline)"
 
 if [[ $command == "generate" ]]
 then
