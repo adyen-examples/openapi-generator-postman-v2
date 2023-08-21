@@ -7,7 +7,7 @@ fi
 
 command=$1
 cmdline=$@
-echo "-->Executing $command ($cmdline)"
+echo "-->OpenAPI Generator Postman run ($cmdline)"
 
 if [[ $command == "generate" ]]
 then
