@@ -143,6 +143,7 @@ public class PostmanV2GeneratorTest {
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
             .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .addAdditionalProperty(PostmanV2Generator.PATH_PARAMS_AS_VARIABLES, true)
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
     final ClientOptInput clientOptInput = configurator.toClientOptInput();
@@ -177,6 +178,7 @@ public class PostmanV2GeneratorTest {
             .setGeneratorName("postman-v2")
             .setInputSpec("./src/test/resources/BasicVariablesInExample.yaml")
             .addAdditionalProperty(PostmanV2Generator.POSTMAN_VARIABLES, "MY_VAR_NAME -MY_VAR_LAST_NAME ")
+            .addAdditionalProperty(PostmanV2Generator.PATH_PARAMS_AS_VARIABLES, true)
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
     final ClientOptInput clientOptInput = configurator.toClientOptInput();
@@ -213,6 +215,7 @@ public class PostmanV2GeneratorTest {
             .setGeneratorName("postman-v2")
             .setInputSpec("./src/test/resources/BasicVariablesInExample.yaml")
             .addAdditionalProperty(PostmanV2Generator.POSTMAN_VARIABLES, "NOT_FOUND_VARIABLE")
+            .addAdditionalProperty(PostmanV2Generator.PATH_PARAMS_AS_VARIABLES, true)
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
     final ClientOptInput clientOptInput = configurator.toClientOptInput();
@@ -241,7 +244,6 @@ public class PostmanV2GeneratorTest {
 
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
-            .addAdditionalProperty(PostmanV2Generator.PATH_PARAMS_AS_VARIABLES, false)
             .setInputSpec("./src/test/resources/SampleProject.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
@@ -293,6 +295,7 @@ public class PostmanV2GeneratorTest {
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
             .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .addAdditionalProperty(PostmanV2Generator.PATH_PARAMS_AS_VARIABLES, true)
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
     final ClientOptInput clientOptInput = configurator.toClientOptInput();
