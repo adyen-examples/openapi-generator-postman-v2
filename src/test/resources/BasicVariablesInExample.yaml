@@ -32,8 +32,6 @@ paths:
             examples:
               patch-user:
                 $ref: '#/components/examples/patch-user-example'
-              patch-user-example-2:
-                $ref: '#/components/examples/patch-user-example-2'
             schema:
               $ref: '#/components/schemas/User'
       responses:
@@ -108,16 +106,6 @@ components:
         id: 001
         firstName: MY_VAR_NAME
         lastName: MY_VAR_LAST_NAME
-        email: alotta.rotta@gmail.com
-        dateOfBirth: '1997-10-31'
-        emailVerified: true
-        createDate: RANDOM_VALUE
-    patch-user-example-2:
-      summary: Example patch user
-      value:
-        id: 001
-        firstName: MY_VAR_NAME_2
-        lastName: Rotta
         email: alotta.rotta@gmail.com
         dateOfBirth: '1997-10-31'
         emailVerified: true

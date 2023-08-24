@@ -12,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * OpenAPI generator for Postman format v2.1
@@ -383,16 +381,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     for (String var : postmanVariableNames) {
       for(PostmanRequestItem requestItem : postmanRequests) {
-        int index = requestItem.getBody().indexOf(var);
+        if (requestItem.getBody().indexOf(var) > 0) {
 
-        if (index > 0) {
-          // regex exact match of variable name (ie match MY_REF but not MY_REF_1)
-          String regex = "\\b" + var + "\\b(?!_\\d)";
-
-          Pattern pattern = Pattern.compile(regex);
-          Matcher matcher = pattern.matcher(requestItem.getBody());
-          // add curly-braces
-          requestItem.setBody(matcher.replaceAll("{{" + var + "}}"));
+          requestItem.setBody(requestItem.getBody().replace(var, "{{" + var + "}}"));
 
           variables.add(new PostmanVariable()
                   .addName(var)
