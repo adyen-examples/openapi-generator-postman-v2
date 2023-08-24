@@ -194,7 +194,13 @@ public class PostmanV2GeneratorTest {
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
     assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
 
+    // verify MY_VAR_NAME is marked as variable
     TestUtils.assertFileContains(path, "{{MY_VAR_NAME}}");
+
+    // verify MY_VAR_NAME_2 is found in the postman.json file
+    TestUtils.assertFileContains(path, "MY_VAR_NAME_2");
+    // verify MY_VAR_NAME_2 is not marked as variable
+    TestUtils.assertFileNotContains(path, "{{MY_VAR_NAME_2}}");
 
   }
   @Test
