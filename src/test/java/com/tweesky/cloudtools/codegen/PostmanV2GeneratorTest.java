@@ -85,6 +85,8 @@ public class PostmanV2GeneratorTest {
 
     // verify request name (from summary)
     TestUtils.assertFileContains(path, "\"name\": \"Get User\"");
+    // verify request endpoint
+    TestUtils.assertFileContains(path, "\"name\": \"/users/:userId\"");
 
   }
 
@@ -166,6 +168,10 @@ public class PostmanV2GeneratorTest {
     // verify param groupId (with default value)
     TestUtils.assertFileContains(path,
             "key\": \"groupId\", \"value\": \"1\", \"type\": \"number\"");
+
+    // verify request endpoint
+    TestUtils.assertFileContains(path, "\"name\": \"/users/{{userId}}\"");
+
   }
 
   @Test
@@ -197,6 +203,10 @@ public class PostmanV2GeneratorTest {
     assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
 
     TestUtils.assertFileContains(path, "{{MY_VAR_NAME}}");
+
+    // verify request endpoint
+    TestUtils.assertFileContains(path, "\"name\": \"/users/{{userId}}\"");
+
 
   }
   @Test
@@ -253,6 +263,7 @@ public class PostmanV2GeneratorTest {
     // verify json has only Server variables (baseUrl, etc..)
     assertTrue(jsonObject.get("variable") instanceof JSONArray);
     assertEquals(4, ((JSONArray) jsonObject.get("variable")).size());
+
   }
 
   @Test
