@@ -193,7 +193,11 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     for(CodegenOperation codegenOperation : opList) {
 
       if(pathParamsAsVariables) {
+        // create Postman variable from path parameter
         codegenOperation.path = doubleCurlyBraces(codegenOperation.path);
+      } else {
+        // use Postman notation for path parameter
+        codegenOperation.path = replacesBracesInPath(codegenOperation.path);
       }
 
       codegenOperation.summary = getSummary(codegenOperation);
@@ -475,6 +479,16 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     String s = str.replace("{{", "{").replace("}}", "}");
     // change all singlebraces to doublebraces
     s = s.replace("{", "{{").replace("}", "}}");
+
+    return s;
+
+  }
+
+  // convert path from /users/{id} to /users/:id
+  String replacesBracesInPath(String path) {
+
+    String s = path.replace("{", ":");
+    s = s.replace("}", "");
 
     return s;
 
