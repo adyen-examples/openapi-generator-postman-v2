@@ -533,7 +533,7 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  public void testAddToList() throws IOException, ParseException {
+  public void testAddToList() {
 
     PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
 
