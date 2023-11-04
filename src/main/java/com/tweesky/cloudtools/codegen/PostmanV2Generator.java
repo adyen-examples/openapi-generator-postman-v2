@@ -293,10 +293,16 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     codegenOperationsByTag.put(key, list);
 
+    // sort requests by path
+    Collections.sort(list, Comparator.comparing(obj -> obj.path));
+
   }
 
   void addToList(CodegenOperation codegenOperation) {
     codegenOperationsList.add(codegenOperation);
+
+    // sort requests by path
+    Collections.sort(codegenOperationsList, Comparator.comparing(obj -> obj.path));
   }
 
   String getResponseBody(CodegenResponse codegenResponse) {
@@ -364,6 +370,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     return items;
   }
+
+
 
   // split, trim
   void extractPostmanVariableNames(String postmanVariablesCsv) {
