@@ -198,6 +198,21 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       } else {
         // use Postman notation for path parameter
         codegenOperation.path = replacesBracesInPath(codegenOperation.path);
+        // ad-hoc customisation for specific path parameters:
+        // companyId: set value as YOUR_COMPANY_ACCOUNT env variable
+        // merchantId: set value as YOUR_MERCHANT_ACCOUNT env variable
+        if(codegenOperation.path.contains(":companyId") || codegenOperation.path.contains(":merchantId")) {
+          for(CodegenParameter codegenParameter : codegenOperation.pathParams) {
+            if(codegenParameter.paramName.equalsIgnoreCase("companyId")) {
+              // set default value for `companyId` path parameter
+              codegenParameter.defaultValue = "{{YOUR_COMPANY_ACCOUNT}}";
+            }
+            if(codegenParameter.paramName.equalsIgnoreCase("merchantId")) {
+              // set default value for `merchantId` path parameter
+              codegenParameter.defaultValue = "{{YOUR_MERCHANT_ACCOUNT}}";
+            }
+          }
+        }
       }
 
       codegenOperation.summary = getSummary(codegenOperation);
