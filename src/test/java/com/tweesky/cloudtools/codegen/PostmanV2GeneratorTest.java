@@ -600,4 +600,39 @@ public class PostmanV2GeneratorTest {
     assertEquals(1, postmanV2Generator.codegenOperationsByTag.size());
     assertEquals(true, postmanV2Generator.codegenOperationsByTag.containsKey("default"));
   }
+
+  // test special handling of `merchantId` and `companyId` path parameters
+  @Test
+  public void testMgmtApi() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/MgmtApi.json")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    TestUtils.assertFileExists(Paths.get(output + "/postman.json"));
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+
+    // verify merchantId default value
+    TestUtils.assertFileContains(path,
+            "key\": \"merchantId\", \"value\": \"{{YOUR_MERCHANT_ACCOUNT}}\",");
+    // verify companyId default value
+    TestUtils.assertFileContains(path,
+            "key\": \"companyId\", \"value\": \"{{YOUR_COMPANY_ACCOUNT}}\",");
+    // verify storeId default value is empty
+    TestUtils.assertFileContains(path,
+            "key\": \"storeId\", \"value\": \"\",");
+  }
+
 }
