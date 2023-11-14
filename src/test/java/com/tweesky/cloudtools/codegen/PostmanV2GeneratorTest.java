@@ -173,7 +173,7 @@ public class PostmanV2GeneratorTest {
             "key\": \"groupId\", \"value\": \"1\", \"type\": \"number\"");
 
     // verify request endpoint
-    TestUtils.assertFileContains(path, "\"name\": \"/users/{{userId}}\"");
+    TestUtils.assertFileContains(path, "\"name\": \"/users/:userId\"");
 
   }
 
@@ -208,7 +208,7 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileContains(path, "{{MY_VAR_NAME}}");
 
     // verify request endpoint
-    TestUtils.assertFileContains(path, "\"name\": \"/users/{{userId}}\"");
+    TestUtils.assertFileContains(path, "\"name\": \"/users/:userId\"");
 
   }
   @Test
@@ -315,7 +315,7 @@ public class PostmanV2GeneratorTest {
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
     // verify request name (from path)
-    TestUtils.assertFileContains(path, "\"name\": \"/users/{{userId}}\"");
+    TestUtils.assertFileContains(path, "\"name\": \"/users/:userId\"");
   }
 
   @Test
@@ -394,20 +394,6 @@ public class PostmanV2GeneratorTest {
     TestUtils.assertFileContains(path, "{ \"key\": \"Custom-Header\", \"value\": \"\", \"disabled\": true");
     // header with default value (disabled: false)
     TestUtils.assertFileContains(path, "{ \"key\": \"Another-Custom-Header\", \"value\": \"abc\", \"disabled\": false");
-  }
-
-  @Test
-  public void doubleCurlyBraces() {
-    String str = "/api/{var}/archive";
-
-    assertEquals("/api/{{var}}/archive", new PostmanV2Generator().doubleCurlyBraces(str));
-  }
-
-  @Test
-  public void doubleCurlyBracesNoChanges() {
-    String str = "/api/{{var}}/archive";
-
-    assertEquals("/api/{{var}}/archive", new PostmanV2Generator().doubleCurlyBraces(str));
   }
 
   @Test
