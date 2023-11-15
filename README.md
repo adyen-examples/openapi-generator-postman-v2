@@ -3,7 +3,7 @@
 ## Overview
 Implementation of the OpenAPI generator for Postman format v2.1.
 
-From an OpenAPI file it generates a Postman collection in the Postman V2 json format.
+From an OpenAPI file it generates a Postman collection in the Postman V2 JSON format.
 
 See the available [options](#config-options) to customise the generation.
 
