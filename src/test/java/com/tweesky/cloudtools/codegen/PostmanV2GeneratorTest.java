@@ -621,4 +621,29 @@ public class PostmanV2GeneratorTest {
             "key\": \"storeId\", \"value\": \"\",");
   }
 
+  @Test
+  public void testRequiredQueryParameter() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/SampleProject.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    // verify param pUserId is set as disabled=false
+    TestUtils.assertFileContains(path, "{ \"key\": \"pUserId\", \"value\": \"888\", \"disabled\": false");
+
+  }
+
+
 }
