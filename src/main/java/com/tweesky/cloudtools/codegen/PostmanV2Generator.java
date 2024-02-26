@@ -397,7 +397,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     List<CodegenResponse> responses = codegenOperation.responses;
     List<PostmanResponse> allPostmanResponses = new ArrayList<>();
     for (CodegenResponse response : responses) {
-      //TODO : there could be a clash here is they key (for example basic) is reused for both 200 and 422 responses. We should process this somewhere else or fix this.
         List<PostmanResponse> postmanResponses = getResponseExamples(response, response.code, response.message);
         allPostmanResponses.addAll(postmanResponses);
     }
