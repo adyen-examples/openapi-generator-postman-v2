@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * OpenAPI generator for Postman format v2.1
@@ -405,8 +406,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     // Adding responses to corresponding requests
     for(PostmanRequestItem item: items){
-      var presponse = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).findFirst();
-        presponse.ifPresent(item::setResponse);
+      List<PostmanResponse> presponses = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
+      if(! presponses.isEmpty()){
+        item.addResponses(presponses);
+      }
     }
 
     return items;

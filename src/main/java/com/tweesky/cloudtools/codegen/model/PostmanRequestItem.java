@@ -1,12 +1,15 @@
 package com.tweesky.cloudtools.codegen.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PostmanRequestItem {
 
     private String id;
     private String name;
     private String body;
 
-    private PostmanResponse response;
+    private List<PostmanResponse> responses;
 
     public PostmanRequestItem() {
     }
@@ -46,11 +49,19 @@ public class PostmanRequestItem {
         this.id = id;
     }
 
-    public PostmanResponse getResponse() {
-        return response;
+    public List<PostmanResponse> getResponses() {
+        return responses;
     }
 
-    public void setResponse(PostmanResponse response) {
-        this.response = response;
+    public void addResponse(PostmanResponse response) {
+        if(this.responses == null) { this.responses = new ArrayList<>(); }
+
+        this.responses.add(response);
+    }
+
+    public void addResponses(List<PostmanResponse> responses) {
+        if(this.responses == null) { this.responses = new ArrayList<>(); }
+
+        this.responses.addAll(responses);
     }
 }

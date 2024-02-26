@@ -58,16 +58,17 @@
                                     },
                                     "description": "{{{notes}}}"
                                 }
-                                {{#response}},
-                                "response": [{
-                                    "name": "{{response.name}}",
-                                    "code": "{{response.code}}",
-                                    "status": "{{response.status}}",
-                                    "header": null,
-                                    "cookie": [],
-                                    "body" : "{{{response.body}}}"
-                                }]
-                                {{/response}}
+                                ,"response": [
+                                    {{#responses}}
+                                        {"name": "{{name}}",
+                                        "code": "{{code}}",
+                                        "status": "{{status}}",
+                                        "header": null,
+                                        "cookie": [],
+                                        "body" : "{{{body}}}"
+                                        }{{^-last}},{{/-last}}
+                                    {{/responses}}
+                                ]
                             }{{^-last}},{{/-last}}
                         {{/vendorExtensions.postmanRequests}}
                             ]
