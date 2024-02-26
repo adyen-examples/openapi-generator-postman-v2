@@ -669,4 +669,36 @@ public class PostmanV2GeneratorTest {
 
   }
 
+  @Test
+  public void testResponses() throws IOException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/CheckoutBasic.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(configurator.toClientOptInput()).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    // Testing that we have the expected response in the payload.
+    // TODO : check that all responses are there, and in the right location
+    TestUtils.assertFileContains(path, "                                \"response\": [{\n" +
+            "                                    \"name\": \"OK - the request has succeeded.\",\n" +
+            "                                    \"code\": \"200\",\n" +
+            "                                    \"status\": \"OK\",\n" +
+            "                                    \"header\": null,\n" +
+            "                                    \"cookie\": [],\n" +
+            "                                    \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
+            "                                }],");
+
+  }
+
 }
