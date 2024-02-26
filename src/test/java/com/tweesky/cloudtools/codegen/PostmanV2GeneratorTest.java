@@ -8,7 +8,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenOperation;
@@ -671,16 +670,14 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  @Ignore
   public void testResponses() throws IOException {
-    //TODO : Fix
 
     File output = Files.createTempDirectory("postmantest_").toFile();
     output.deleteOnExit();
 
     final CodegenConfigurator configurator = new CodegenConfigurator()
             .setGeneratorName("postman-v2")
-            .setInputSpec("./src/test/resources/CheckoutBasic.yaml")
+            .setInputSpec("./src/test/resources/CheckoutBasicMultipleKeys.yaml")
             .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
 
     DefaultGenerator generator = new DefaultGenerator();
@@ -691,18 +688,36 @@ public class PostmanV2GeneratorTest {
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
-    // Testing that we have the expected response in the payload.
-    // TODO : check that all responses are there, and in the right location
-    TestUtils.assertFileContains(path, "                                \"response\": [{\n" +
-            "                                    \"name\": \"OK - the request has succeeded.\",\n" +
-            "                                    \"code\": \"200\",\n" +
-            "                                    \"status\": \"OK\",\n" +
-            "                                    \"header\": null,\n" +
-            "                                    \"cookie\": [],\n" +
-            "                                    \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
-            "                                }]");
+    // Testing that we have one item with a single response
+    TestUtils.assertFileContains(path, "                                ,\"response\": [\n" +
+            "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
+            "                                        \"code\": \"200\",\n" +
+            "                                        \"status\": \"OK\",\n" +
+            "                                        \"header\": null,\n" +
+            "                                        \"cookie\": [],\n" +
+            "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
+            "                                        }\n" +
+            "                                ]");
 
-    // Checking that there is no place with an empty response
+    // Checking that we have one item with two responses (duplicate keys), including failure
+    TestUtils.assertFileContains(path, ",\"response\": [\n" +
+            "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
+            "                                        \"code\": \"200\",\n" +
+            "                                        \"status\": \"OK\",\n" +
+            "                                        \"header\": null,\n" +
+            "                                        \"cookie\": [],\n" +
+            "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
+            "                                        },\n" +
+            "                                        {\"name\": \"Unprocessable Entity - a request validation error.\",\n" +
+            "                                        \"code\": \"422\",\n" +
+            "                                        \"status\": \"Client Error\",\n" +
+            "                                        \"header\": null,\n" +
+            "                                        \"cookie\": [],\n" +
+            "                                        \"body\" : \"{\\n  \\\"code\\\" : \\\"422 - 900\\\",\\n  \\\"message\\\" : \\\"Merchant account does not exist\\\"\\n}\"\n" +
+            "                                        }\n" +
+            "                                ]");
+
+    // Checking that there is no place with an empty response that looks bad
     TestUtils.assertFileNotContains(path, "\"response\": [{\n" +
             "                                    \"name\": \"\",\n" +
             "                                    \"code\": \"\",\n" +
