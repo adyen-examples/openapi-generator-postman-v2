@@ -8,7 +8,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.CodegenOperation;
@@ -118,7 +117,6 @@ public class PostmanV2GeneratorTest {
   }
 
   @Test
-  @Ignore
   public void testValidatePostmanJson() throws IOException {
 
     File output = Files.createTempDirectory("postmantest_").toFile();
@@ -408,7 +406,7 @@ public class PostmanV2GeneratorTest {
   @Test
   public void processRequestExample() {
     String STR = "{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"MY_VAR_1\\\",\\n \\\"MY_VAR_2\\\": \\\"Rotta\\\"\\n}";
-    String EXPECTED = "{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"{{MY_VAR_1}}\\\",\\n \\\"{{MY_VAR_2}}\\\": \\\"Rotta\\\"\\n}";;
+    String EXPECTED = "{\\n \\\"id\\\": 777,\\n \\\"firstName\\\": \\\"{{MY_VAR_1}}\\\",\\n \\\"{{MY_VAR_2}}\\\": \\\"Rotta\\\"\\n}";
 
     PostmanV2Generator postmanV2Generator = new PostmanV2Generator();
     postmanV2Generator.postmanVariableNames = new String[]{"MY_VAR_1", "MY_VAR_2"};

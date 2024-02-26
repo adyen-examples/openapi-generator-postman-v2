@@ -318,7 +318,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         if(ref != null) {
           Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(ref));
           String response = new ExampleJsonHelper().getJsonFromExample(example);
-          postmanResponses.add(new PostmanResponse(key, code, message, response));
+          postmanResponses.add(new PostmanResponse(key, codegenResponse, message, response));
         }
       }
 
@@ -544,53 +544,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       ret = "number";
     } else if(openApiDataType.equalsIgnoreCase("boolean")) {
       ret = "boolean";
-    }
-
-    return ret;
-  }
-
-  /**
-   * get HTTP Status Code as text
-   * @param codegenResponse
-   * @return
-   */
-  String getStatus(CodegenResponse codegenResponse) {
-    String ret = "";
-
-    if (codegenResponse.is2xx) {
-      if (codegenResponse.code.equalsIgnoreCase("200")) {
-        ret = "OK";
-      } else if (codegenResponse.code.equalsIgnoreCase("201")) {
-        ret = "Created";
-      } else {
-        ret = "Success";
-      }
-    } else if (codegenResponse.is3xx) {
-      ret = "Redirection";
-    }
-    if (codegenResponse.is4xx) {
-      if (codegenResponse.code.equalsIgnoreCase("400")) {
-        ret = "Bad Request";
-      } else if (codegenResponse.code.equalsIgnoreCase("401")) {
-        ret = "Unauthorized";
-      } else if (codegenResponse.code.equalsIgnoreCase("403")) {
-        ret = "Forbidden";
-      } else if (codegenResponse.code.equalsIgnoreCase("404")) {
-        ret = "Not Found";
-      } else if (codegenResponse.code.equalsIgnoreCase("409")) {
-        ret = "Conflict";
-      } else {
-        ret = "Client Error";
-      }
-    }
-    if (codegenResponse.is5xx) {
-      if (codegenResponse.code.equalsIgnoreCase("500")) {
-        ret = "Internal Server Error";
-      } else if (codegenResponse.code.equalsIgnoreCase("501")) {
-        ret = "Not Implemented";
-      } else {
-        ret = "Server Error";
-      }
     }
 
     return ret;
