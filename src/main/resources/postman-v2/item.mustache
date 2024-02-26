@@ -5,6 +5,13 @@
                         {{#vendorExtensions.postmanRequests}}
                             {
                                 "name": "{{{name}}}",
+                                "response": [{
+                                    "name": "{{response.name}}",
+                                    "code": "{{response.code}}",
+                                    "header": null,
+                                    "cookie": [],
+                                    "body" : "{{{response.body}}}"
+                                }],
                                 "request": {
                                     "method": "{{httpMethod}}",
                                     "header": [

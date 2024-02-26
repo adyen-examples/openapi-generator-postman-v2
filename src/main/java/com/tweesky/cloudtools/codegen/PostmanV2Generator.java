@@ -1,6 +1,7 @@
 package com.tweesky.cloudtools.codegen;
 
 import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
+import com.tweesky.cloudtools.codegen.model.PostmanResponse;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;
@@ -23,7 +24,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   protected String apiVersion = "1.0.0";
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
   public static final String FOLDER_STRATEGY = "folderStrategy";
-  public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Tags";
+  public static final String FOLDER_STRATEGY_DEFAULT_VALUE   = "Tags";
   // Select whether to create Postman variables for path templates
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = false;
@@ -261,26 +262,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         codegenOperation.vendorExtensions.put("postmanRequests", postmanRequests);
       }
 
-      // set all available responses
-      for(CodegenResponse codegenResponse : codegenOperation.responses) {
-
-        codegenResponse.vendorExtensions.put("status", getStatus(codegenResponse));
-
-//        TODO: set response for each request
-//        if(postmanRequests != null) {
-//          // re-use request body for each response
-//          codegenResponse.vendorExtensions.put("requestBody", postmanRequests);
-//        }
-//        String responseBody = getResponseBody(codegenResponse);
-//        if(responseBody != null) {
-//          codegenResponse.vendorExtensions.put("responseBody", responseBody);
-//          codegenResponse.vendorExtensions.put("hasResponseBody", true);
-//        } else {
-//          codegenResponse.vendorExtensions.put("hasResponseBody", false);
-//        }
-
-      }
-
       if(folderStrategy.equalsIgnoreCase("tags")) {
         addToMap(codegenOperation);
       } else {
@@ -321,6 +302,31 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     // sort requests by path
     Collections.sort(codegenOperationsList, Comparator.comparing(obj -> obj.path));
+  }
+
+  List<PostmanResponse> getResponseExamples(CodegenResponse codegenResponse, String code, String message) {
+    List<PostmanResponse> postmanResponses = new ArrayList<>();
+
+    if (codegenResponse.getContent() != null && codegenResponse.getContent().get("application/json") != null &&
+            codegenResponse.getContent().get("application/json").getExamples() != null) {
+
+      var examples = codegenResponse.getContent().get("application/json").getExamples();
+      for (Map.Entry<String, Example> entry : examples.entrySet()) {
+        String key = entry.getKey();
+        String ref = entry.getValue().get$ref();
+
+        if(ref != null) {
+          Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(ref));
+          String response = new ExampleJsonHelper().getJsonFromExample(example);
+          postmanResponses.add(new PostmanResponse(key, code, message, response));
+        }
+      }
+
+    } else if (codegenResponse.getContent() != null) {
+      // TODO : Implement
+    }
+
+    return postmanResponses;
   }
 
   String getResponseBody(CodegenResponse codegenResponse) {
@@ -368,7 +374,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
             Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
             String exampleAsString = new ExampleJsonHelper().getJsonFromExample(example);
 
-            items.add(new PostmanRequestItem(example.getSummary(), exampleAsString));
+            items.add(new PostmanRequestItem(example.getSummary(), exampleAsString, entry.getKey()));
           }
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
@@ -386,10 +392,25 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       items.add(new PostmanRequestItem(codegenOperation.summary, ""));
     }
 
+    // Grabbing responses
+    List<CodegenResponse> responses = codegenOperation.responses;
+    List<PostmanResponse> allPostmanResponses = new ArrayList<>();
+    for (CodegenResponse response : responses) {
+      //TODO : there could be a clash here is they key (for example basic) is reused for both 200 and 422 responses. We should process this somewhere else or fix this.
+        List<PostmanResponse> postmanResponses = getResponseExamples(response, response.code, response.message);
+        allPostmanResponses.addAll(postmanResponses);
+    }
+
+    System.out.println(allPostmanResponses);
+
+    // Adding responses to corresponding requests
+    for(PostmanRequestItem item: items){
+      var presponse = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).findFirst();
+        presponse.ifPresent(item::setResponse);
+    }
+
     return items;
   }
-
-
 
   // split, trim
   void extractPostmanVariableNames(String postmanVariablesCsv) {
