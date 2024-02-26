@@ -697,7 +697,17 @@ public class PostmanV2GeneratorTest {
             "                                    \"header\": null,\n" +
             "                                    \"cookie\": [],\n" +
             "                                    \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
-            "                                }],");
+            "                                }]");
+
+    // Checking that there is no place with an empty response
+    TestUtils.assertFileNotContains(path, "\"response\": [{\n" +
+            "                                    \"name\": \"\",\n" +
+            "                                    \"code\": \"\",\n" +
+            "                                    \"status\": \"\",\n" +
+            "                                    \"header\": null,\n" +
+            "                                    \"cookie\": [],\n" +
+            "                                    \"body\" : \"\"\n" +
+            "                                }]");
 
   }
 

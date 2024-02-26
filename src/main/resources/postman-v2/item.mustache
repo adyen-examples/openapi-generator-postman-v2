@@ -5,14 +5,6 @@
                         {{#vendorExtensions.postmanRequests}}
                             {
                                 "name": "{{{name}}}",
-                                "response": [{
-                                    "name": "{{response.name}}",
-                                    "code": "{{response.code}}",
-                                    "status": "{{response.status}}",
-                                    "header": null,
-                                    "cookie": [],
-                                    "body" : "{{{response.body}}}"
-                                }],
                                 "request": {
                                     "method": "{{httpMethod}}",
                                     "header": [
@@ -66,6 +58,16 @@
                                     },
                                     "description": "{{{notes}}}"
                                 }
+                                {{#response}},
+                                "response": [{
+                                    "name": "{{response.name}}",
+                                    "code": "{{response.code}}",
+                                    "status": "{{response.status}}",
+                                    "header": null,
+                                    "cookie": [],
+                                    "body" : "{{{response.body}}}"
+                                }]
+                                {{/response}}
                             }{{^-last}},{{/-last}}
                         {{/vendorExtensions.postmanRequests}}
                             ]
