@@ -305,7 +305,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     Collections.sort(codegenOperationsList, Comparator.comparing(obj -> obj.path));
   }
 
-  List<PostmanResponse> getResponseExamples(CodegenResponse codegenResponse, String code, String message) {
+  List<PostmanResponse> getResponseExamples(CodegenResponse codegenResponse, String message) {
     List<PostmanResponse> postmanResponses = new ArrayList<>();
 
     if (codegenResponse.getContent() != null && codegenResponse.getContent().get("application/json") != null &&
@@ -374,7 +374,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     List<CodegenResponse> responses = codegenOperation.responses;
     List<PostmanResponse> allPostmanResponses = new ArrayList<>();
     for (CodegenResponse response : responses) {
-        List<PostmanResponse> postmanResponses = getResponseExamples(response, response.code, response.message);
+        List<PostmanResponse> postmanResponses = getResponseExamples(response, response.message);
         allPostmanResponses.addAll(postmanResponses);
     }
 
