@@ -7,10 +7,12 @@ public class PostmanResponse {
 
     private String id;
     private String code;
-
     private String status;
     private String name;
     private String body;
+
+    // Somehow Postman decided that response examples should contain the request data again...
+    private PostmanRequestItem originalRequest;
 
     public PostmanResponse(String id, CodegenResponse response, String name, String body) {
         this.id = id;
@@ -18,14 +20,7 @@ public class PostmanResponse {
         this.status = CodegenUtils.getStatus(response);
         this.name = name;
         this.body = body;
-    }
-
-    public PostmanResponse(String id, String code, String status, String name, String body) {
-        this.id = id;
-        this.code = code;
-        this.status = status;
-        this.name = name;
-        this.body = body;
+        this.originalRequest = null; // Setting this here explicitly for clarity
     }
 
     public String getId() {
@@ -66,4 +61,8 @@ public class PostmanResponse {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public PostmanRequestItem getOriginalRequest() { return originalRequest; }
+
+    public void setOriginalRequest(PostmanRequestItem originalRequest) { this.originalRequest = originalRequest; }
 }

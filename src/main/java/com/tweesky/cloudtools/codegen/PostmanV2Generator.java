@@ -330,29 +330,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return postmanResponses;
   }
 
-  String getResponseBody(CodegenResponse codegenResponse) {
-    String responseBody = "";
-
-    if(codegenResponse.getContent() != null && codegenResponse.getContent().get("application/json") != null &&
-            codegenResponse.getContent().get("application/json").getExamples() != null) {
-      // find in components/examples
-      String exampleRef = codegenResponse.getContent().get("application/json").getExamples()
-              .values().iterator().next().get$ref();
-      if(exampleRef != null) {
-        Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
-        responseBody = new ExampleJsonHelper().getJsonFromExample(example);
-      }
-    } else if(codegenResponse.getContent() != null) {
-      // find in context examples
-      Map<String, Example> maxExamples = codegenResponse.getContent().get("application/json").getExamples();
-      if(maxExamples != null && maxExamples.values().iterator().hasNext()) {
-        responseBody = new ExampleJsonHelper().getJsonFromExample(maxExamples.values().iterator().next());
-      }
-    }
-
-    return responseBody;
-  }
-
   // from OpenAPI operation to n Postman requests
   List<PostmanRequestItem> getPostmanRequests(CodegenOperation codegenOperation) {
     List<PostmanRequestItem> items = new ArrayList<>();
@@ -401,12 +378,11 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         allPostmanResponses.addAll(postmanResponses);
     }
 
-    System.out.println(allPostmanResponses);
-
     // Adding responses to corresponding requests
     for(PostmanRequestItem item: items){
       List<PostmanResponse> presponses = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
-      if(! presponses.isEmpty()){
+      if(!presponses.isEmpty()){
+        presponses.forEach(r -> r.setOriginalRequest(item));
         item.addResponses(presponses);
       }
     }

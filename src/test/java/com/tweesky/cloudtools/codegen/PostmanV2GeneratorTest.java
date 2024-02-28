@@ -688,32 +688,153 @@ public class PostmanV2GeneratorTest {
 
     Path path = Paths.get(output + "/postman.json");
     TestUtils.assertFileExists(path);
+
     // Testing that we have one item with a single response
-    TestUtils.assertFileContains(path, "                                ,\"response\": [\n" +
+    TestUtils.assertFileContains(path,  "\"response\": [\n" +
             "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
             "                                        \"code\": \"200\",\n" +
             "                                        \"status\": \"OK\",\n" +
             "                                        \"header\": null,\n" +
             "                                        \"cookie\": [],\n" +
-            "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
+            "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\",\n" +
+            "                                        \"originalRequest\": {\n" +
+            "    \"method\": \"POST\",\n" +
+            "    \"header\": [\n" +
+            "        {\n" +
+            "        \"key\": \"Content-Type\",\n" +
+            "        \"value\": \"application/json\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"disabled\": false\n" +
+            "        },\n" +
+            "        {\n" +
+            "        \"key\": \"Accept\",\n" +
+            "        \"value\": \"application/json\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"disabled\": false\n" +
+            "        }\n" +
+            "    ],\n" +
+            "    \"body\": {\n" +
+            "    \"mode\": \"raw\",\n" +
+            "    \"raw\": \"{\\n  \\\"paymentMethod\\\" : {\\n    \\\"name\\\" : \\\"googlepay\\\"\\n  },\\n  \\\"amount\\\" : {\\n    \\\"currency\\\" : \\\"EUR\\\",\\n    \\\"value\\\" : 1000\\n  },\\n  \\\"merchantAccount\\\" : \\\"YOUR_MERCHANT_ACCOUNT\\\",\\n  \\\"reference\\\" : \\\"YOUR_REFERENCE\\\",\\n  \\\"channel\\\" : \\\"Android\\\"\\n}\",\n" +
+            "    \"options\": {\n" +
+            "    \"raw\": {\n" +
+            "    \"language\": \"json\"\n" +
+            "    }\n" +
+            "    }\n" +
+            "    },\n" +
+            "    \"url\": {\n" +
+            "    \"raw\": \"{{baseUrl}}/payments\",\n" +
+            "    \"host\": [\n" +
+            "    \"{{baseUrl}}\"\n" +
+            "    ],\n" +
+            "    \"path\": [\n" +
+            "        \"payments\"\n" +
+            "    ],\n" +
+            "    \"variable\": [\n" +
+            "    ],\n" +
+            "    \"query\": [\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    \"description\": \"\"\n" +
+            "}\n" +
             "                                        }\n" +
             "                                ]");
 
     // Checking that we have one item with two responses (duplicate keys), including failure
-    TestUtils.assertFileContains(path, ",\"response\": [\n" +
+    TestUtils.assertFileContains(path, "\"response\": [\n" +
             "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
             "                                        \"code\": \"200\",\n" +
             "                                        \"status\": \"OK\",\n" +
             "                                        \"header\": null,\n" +
             "                                        \"cookie\": [],\n" +
-            "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\"\n" +
+            "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\",\n" +
+            "                                        \"originalRequest\": {\n" +
+            "    \"method\": \"POST\",\n" +
+            "    \"header\": [\n" +
+            "        {\n" +
+            "        \"key\": \"Content-Type\",\n" +
+            "        \"value\": \"application/json\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"disabled\": false\n" +
+            "        },\n" +
+            "        {\n" +
+            "        \"key\": \"Accept\",\n" +
+            "        \"value\": \"application/json\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"disabled\": false\n" +
+            "        }\n" +
+            "    ],\n" +
+            "    \"body\": {\n" +
+            "    \"mode\": \"raw\",\n" +
+            "    \"raw\": \"{\\n  \\\"paymentMethod\\\" : {\\n    \\\"name\\\" : \\\"applepay\\\"\\n  },\\n  \\\"amount\\\" : {\\n    \\\"currency\\\" : \\\"EUR\\\",\\n    \\\"value\\\" : 1000\\n  },\\n  \\\"merchantAccount\\\" : \\\"YOUR_MERCHANT_ACCOUNT\\\",\\n  \\\"reference\\\" : \\\"YOUR_REFERENCE\\\",\\n  \\\"channel\\\" : \\\"iOS\\\"\\n}\",\n" +
+            "    \"options\": {\n" +
+            "    \"raw\": {\n" +
+            "    \"language\": \"json\"\n" +
+            "    }\n" +
+            "    }\n" +
+            "    },\n" +
+            "    \"url\": {\n" +
+            "    \"raw\": \"{{baseUrl}}/payments\",\n" +
+            "    \"host\": [\n" +
+            "    \"{{baseUrl}}\"\n" +
+            "    ],\n" +
+            "    \"path\": [\n" +
+            "        \"payments\"\n" +
+            "    ],\n" +
+            "    \"variable\": [\n" +
+            "    ],\n" +
+            "    \"query\": [\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    \"description\": \"\"\n" +
+            "}\n" +
             "                                        },\n" +
             "                                        {\"name\": \"Unprocessable Entity - a request validation error.\",\n" +
             "                                        \"code\": \"422\",\n" +
             "                                        \"status\": \"Client Error\",\n" +
             "                                        \"header\": null,\n" +
             "                                        \"cookie\": [],\n" +
-            "                                        \"body\" : \"{\\n  \\\"code\\\" : \\\"422 - 900\\\",\\n  \\\"message\\\" : \\\"Merchant account does not exist\\\"\\n}\"\n" +
+            "                                        \"body\" : \"{\\n  \\\"code\\\" : \\\"422 - 900\\\",\\n  \\\"message\\\" : \\\"Merchant account does not exist\\\"\\n}\",\n" +
+            "                                        \"originalRequest\": {\n" +
+            "    \"method\": \"POST\",\n" +
+            "    \"header\": [\n" +
+            "        {\n" +
+            "        \"key\": \"Content-Type\",\n" +
+            "        \"value\": \"application/json\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"disabled\": false\n" +
+            "        },\n" +
+            "        {\n" +
+            "        \"key\": \"Accept\",\n" +
+            "        \"value\": \"application/json\",\n" +
+            "        \"description\": \"\",\n" +
+            "        \"disabled\": false\n" +
+            "        }\n" +
+            "    ],\n" +
+            "    \"body\": {\n" +
+            "    \"mode\": \"raw\",\n" +
+            "    \"raw\": \"{\\n  \\\"paymentMethod\\\" : {\\n    \\\"name\\\" : \\\"applepay\\\"\\n  },\\n  \\\"amount\\\" : {\\n    \\\"currency\\\" : \\\"EUR\\\",\\n    \\\"value\\\" : 1000\\n  },\\n  \\\"merchantAccount\\\" : \\\"YOUR_MERCHANT_ACCOUNT\\\",\\n  \\\"reference\\\" : \\\"YOUR_REFERENCE\\\",\\n  \\\"channel\\\" : \\\"iOS\\\"\\n}\",\n" +
+            "    \"options\": {\n" +
+            "    \"raw\": {\n" +
+            "    \"language\": \"json\"\n" +
+            "    }\n" +
+            "    }\n" +
+            "    },\n" +
+            "    \"url\": {\n" +
+            "    \"raw\": \"{{baseUrl}}/payments\",\n" +
+            "    \"host\": [\n" +
+            "    \"{{baseUrl}}\"\n" +
+            "    ],\n" +
+            "    \"path\": [\n" +
+            "        \"payments\"\n" +
+            "    ],\n" +
+            "    \"variable\": [\n" +
+            "    ],\n" +
+            "    \"query\": [\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    \"description\": \"\"\n" +
+            "}\n" +
             "                                        }\n" +
             "                                ]");
 
