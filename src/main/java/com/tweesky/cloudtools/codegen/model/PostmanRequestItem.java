@@ -11,9 +11,6 @@ public class PostmanRequestItem {
 
     private List<PostmanResponse> responses;
 
-    public PostmanRequestItem() {
-    }
-
     public PostmanRequestItem(String name, String body, String id) {
         this.id = id;
         this.name = name;

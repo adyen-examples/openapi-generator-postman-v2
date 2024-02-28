@@ -9,8 +9,6 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,8 +17,6 @@ import java.util.stream.Collectors;
  * OpenAPI generator for Postman format v2.1
  */
 public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig {
-
-  private final Logger LOGGER = LoggerFactory.getLogger(PostmanV2Generator.class);
 
   protected String apiVersion = "1.0.0";
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
@@ -91,23 +87,23 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     cliOptions.add(CliOption.newString(GENERATED_VARIABLES, "list of auto-generated variables"));
     cliOptions.add(CliOption.newString(REQUEST_PARAMETER_GENERATION, "whether to generate the request parameters based on the schema or the examples"));
 
-    /**
-     * Template Location.  This is the location which templates will be read from.  The generator
-     * will use the resource stream to attempt to read the templates.
+    /*
+      Template Location.  This is the location which templates will be read from.  The generator
+      will use the resource stream to attempt to read the templates.
      */
     templateDir = "postman-v2";
 
-    /**
+    /*
      * Api Package.  Optional, if needed, this can be used in templates
      */
     apiPackage = "org.openapitools.api";
 
-    /**
+    /*
      * Model Package.  Optional, if needed, this can be used in templates
      */
     modelPackage = "org.openapitools.model";
 
-    /**
+    /*
      * Additional Properties.  These values can be passed to the templates and
      * are available in models, apis, and supporting files
      */
@@ -135,10 +131,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public List<CodegenServerVariable> fromServerVariables(Map<String, ServerVariable> variables) {
 
     if(variables != null){
-      variables.entrySet().stream().forEach(serverVariableEntry -> this.variables.add(new PostmanVariable()
-              .addName(serverVariableEntry.getKey())
+      variables.forEach((key, value) -> this.variables.add(new PostmanVariable()
+              .addName(key)
               .addType("string")
-              .addDefaultValue(serverVariableEntry.getValue().getDefault())));
+              .addDefaultValue(value.getDefault())));
     }
 
     return super.fromServerVariables(variables);
@@ -250,7 +246,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       // build pathSegments
       String[] pathSegments = codegenOperation.path.substring(1).split("/");
       codegenOperation.vendorExtensions.put("pathSegments", pathSegments);
-      codegenOperation.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
+      codegenOperation.responses.forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
       List<PostmanRequestItem> postmanRequests = getPostmanRequests(codegenOperation);
       if(postmanRequests != null) {
@@ -277,7 +273,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   void addToMap(CodegenOperation codegenOperation){
 
-    String key = null;
+    String key;
     if(codegenOperation.tags == null || codegenOperation.tags.isEmpty()) {
       key = "default";
     } else {
@@ -294,7 +290,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     codegenOperationsByTag.put(key, list);
 
     // sort requests by path
-    Collections.sort(list, Comparator.comparing(obj -> obj.path));
+    list.sort(Comparator.comparing(obj -> obj.path));
 
   }
 
@@ -302,7 +298,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     codegenOperationsList.add(codegenOperation);
 
     // sort requests by path
-    Collections.sort(codegenOperationsList, Comparator.comparing(obj -> obj.path));
+    codegenOperationsList.sort(Comparator.comparing(obj -> obj.path));
   }
 
   List<PostmanResponse> getResponseExamples(CodegenResponse codegenResponse, String message) {
@@ -332,6 +328,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   // from OpenAPI operation to n Postman requests
   List<PostmanRequestItem> getPostmanRequests(CodegenOperation codegenOperation) {
+    // Note : For all PostmanRequestItem who get created without an id parameter, no responses will be available
+
     List<PostmanRequestItem> items = new ArrayList<>();
 
     if(codegenOperation.getHasBodyParam()) {
@@ -380,10 +378,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     // Adding responses to corresponding requests
     for(PostmanRequestItem item: items){
-      List<PostmanResponse> presponses = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
-      if(!presponses.isEmpty()){
-        presponses.forEach(r -> r.setOriginalRequest(item));
-        item.addResponses(presponses);
+      List<PostmanResponse> postmanResponses = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
+      if(!postmanResponses.isEmpty()){
+        postmanResponses.forEach(r -> r.setOriginalRequest(item));
+        item.addResponses(postmanResponses);
       }
     }
 
@@ -458,7 +456,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   /**
    * override with any special text escaping logic to handle unsafe
-   * characters so as to avoid code injection
+   * characters to avoid code injection
    *
    * @param input String to be cleaned up
    * @return string with unsafe characters removed or escaped
@@ -529,7 +527,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   // make sure operation name is always set
   String getSummary(CodegenOperation codegenOperation) {
-    String ret = null;
+    String ret;
 
     if(codegenOperation.summary != null) {
       ret = codegenOperation.summary;
@@ -543,8 +541,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   /**
    * Format text to include in JSON file
-   * @param description
-   * @return
+   * @param description potentially multiline input with special characters
+   * @return formatted description
    */
   String formatDescription(String description) {
 

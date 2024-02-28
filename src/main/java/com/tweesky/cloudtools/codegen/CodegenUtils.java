@@ -7,8 +7,8 @@ public class CodegenUtils {
     /**
      * get HTTP Status Code as text
      *
-     * @param codegenResponse
-     * @return
+     * @param codegenResponse response information from a request
+     * @return HTTP Status code information, as text description
      */
     public static String getStatus(CodegenResponse codegenResponse) {
         String ret = "";
