@@ -694,7 +694,11 @@ public class PostmanV2GeneratorTest {
             "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
             "                                        \"code\": \"200\",\n" +
             "                                        \"status\": \"OK\",\n" +
-            "                                        \"header\": null,\n" +
+            "                                        \"header\": [{\n" +
+            "                                        \"key\": \"Content-Type\",\n" +
+            "                                        \"value\": \"application/json\"}\n" +
+            "                                        ],\n" +
+            "                                        \"_postman_previewlanguage\": \"json\",\n" +
             "                                        \"cookie\": [],\n" +
             "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\",\n" +
             "                                        \"originalRequest\": {\n" +
@@ -745,7 +749,11 @@ public class PostmanV2GeneratorTest {
             "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
             "                                        \"code\": \"200\",\n" +
             "                                        \"status\": \"OK\",\n" +
-            "                                        \"header\": null,\n" +
+            "                                        \"header\": [{\n" +
+            "                                        \"key\": \"Content-Type\",\n" +
+            "                                        \"value\": \"application/json\"}\n" +
+            "                                        ],\n" +
+            "                                        \"_postman_previewlanguage\": \"json\",\n" +
             "                                        \"cookie\": [],\n" +
             "                                        \"body\" : \"{\\n  \\\"pspReference\\\" : \\\"PSP1234567890\\\",\\n  \\\"resultCode\\\" : \\\"success\\\"\\n}\",\n" +
             "                                        \"originalRequest\": {\n" +
@@ -792,7 +800,11 @@ public class PostmanV2GeneratorTest {
             "                                        {\"name\": \"Unprocessable Entity - a request validation error.\",\n" +
             "                                        \"code\": \"422\",\n" +
             "                                        \"status\": \"Client Error\",\n" +
-            "                                        \"header\": null,\n" +
+            "                                        \"header\": [{\n" +
+            "                                        \"key\": \"Content-Type\",\n" +
+            "                                        \"value\": \"application/json\"}\n" +
+            "                                        ],\n" +
+            "                                        \"_postman_previewlanguage\": \"json\",\n" +
             "                                        \"cookie\": [],\n" +
             "                                        \"body\" : \"{\\n  \\\"code\\\" : \\\"422 - 900\\\",\\n  \\\"message\\\" : \\\"Merchant account does not exist\\\"\\n}\",\n" +
             "                                        \"originalRequest\": {\n" +

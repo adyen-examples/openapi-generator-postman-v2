@@ -11,7 +11,11 @@
                                         {"name": "{{name}}",
                                         "code": "{{code}}",
                                         "status": "{{status}}",
-                                        "header": null,
+                                        "header": [{
+                                        "key": "Content-Type",
+                                        "value": "application/json"}
+                                        ],
+                                        "_postman_previewlanguage": "json",
                                         "cookie": [],
                                         "body" : "{{{body}}}",
                                         "originalRequest": {{#originalRequest}}{{>request}}{{/originalRequest}}
