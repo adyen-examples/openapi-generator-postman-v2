@@ -18,6 +18,9 @@ public class CodegenUtils {
                 ret = "OK";
             } else if (codegenResponse.code.equalsIgnoreCase("201")) {
                 ret = "Created";
+            }
+            else if (codegenResponse.code.equalsIgnoreCase("202")) {
+                ret = "Accepted";
             } else {
                 ret = "Success";
             }

@@ -692,7 +692,7 @@ public class PostmanV2GeneratorTest {
     // Testing that we have one item with a single response
     TestUtils.assertFileContains(path,  "\"response\": [\n" +
             "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
-            "                                        \"code\": \"200\",\n" +
+            "                                        \"code\": 200,\n" +
             "                                        \"status\": \"OK\",\n" +
             "                                        \"header\": [{\n" +
             "                                        \"key\": \"Content-Type\",\n" +
@@ -747,7 +747,7 @@ public class PostmanV2GeneratorTest {
     // Checking that we have one item with two responses (duplicate keys), including failure
     TestUtils.assertFileContains(path, "\"response\": [\n" +
             "                                        {\"name\": \"OK - the request has succeeded.\",\n" +
-            "                                        \"code\": \"200\",\n" +
+            "                                        \"code\": 200,\n" +
             "                                        \"status\": \"OK\",\n" +
             "                                        \"header\": [{\n" +
             "                                        \"key\": \"Content-Type\",\n" +
@@ -798,7 +798,7 @@ public class PostmanV2GeneratorTest {
             "}\n" +
             "                                        },\n" +
             "                                        {\"name\": \"Unprocessable Entity - a request validation error.\",\n" +
-            "                                        \"code\": \"422\",\n" +
+            "                                        \"code\": 422,\n" +
             "                                        \"status\": \"Client Error\",\n" +
             "                                        \"header\": [{\n" +
             "                                        \"key\": \"Content-Type\",\n" +
