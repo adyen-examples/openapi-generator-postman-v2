@@ -799,7 +799,7 @@ public class PostmanV2GeneratorTest {
             "                                        },\n" +
             "                                        {\"name\": \"Unprocessable Entity - a request validation error.\",\n" +
             "                                        \"code\": 422,\n" +
-            "                                        \"status\": \"Client Error\",\n" +
+            "                                        \"status\": \"Unprocessable Entity\",\n" +
             "                                        \"header\": [{\n" +
             "                                        \"key\": \"Content-Type\",\n" +
             "                                        \"value\": \"application/json\"}\n" +
