@@ -1,6 +1,7 @@
 package com.tweesky.cloudtools.codegen;
 
 import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
+import com.tweesky.cloudtools.codegen.model.PostmanResponse;
 import com.tweesky.cloudtools.codegen.model.PostmanVariable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;
@@ -8,22 +9,19 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import org.openapitools.codegen.*;
 import org.openapitools.codegen.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * OpenAPI generator for Postman format v2.1
  */
 public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig {
 
-  private final Logger LOGGER = LoggerFactory.getLogger(PostmanV2Generator.class);
-
   protected String apiVersion = "1.0.0";
   // Select whether to create folders according to the spec’s paths or tags. Values: Paths | Tags
   public static final String FOLDER_STRATEGY = "folderStrategy";
-  public static final String FOLDER_STRATEGY_DEFAULT_VALUE = "Tags";
+  public static final String FOLDER_STRATEGY_DEFAULT_VALUE   = "Tags";
   // Select whether to create Postman variables for path templates
   public static final String PATH_PARAMS_AS_VARIABLES = "pathParamsAsVariables";
   public static final Boolean PATH_PARAMS_AS_VARIABLES_DEFAULT_VALUE = false;
@@ -89,23 +87,23 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     cliOptions.add(CliOption.newString(GENERATED_VARIABLES, "list of auto-generated variables"));
     cliOptions.add(CliOption.newString(REQUEST_PARAMETER_GENERATION, "whether to generate the request parameters based on the schema or the examples"));
 
-    /**
-     * Template Location.  This is the location which templates will be read from.  The generator
-     * will use the resource stream to attempt to read the templates.
+    /*
+      Template Location.  This is the location which templates will be read from.  The generator
+      will use the resource stream to attempt to read the templates.
      */
     templateDir = "postman-v2";
 
-    /**
+    /*
      * Api Package.  Optional, if needed, this can be used in templates
      */
     apiPackage = "org.openapitools.api";
 
-    /**
+    /*
      * Model Package.  Optional, if needed, this can be used in templates
      */
     modelPackage = "org.openapitools.model";
 
-    /**
+    /*
      * Additional Properties.  These values can be passed to the templates and
      * are available in models, apis, and supporting files
      */
@@ -133,10 +131,10 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
   public List<CodegenServerVariable> fromServerVariables(Map<String, ServerVariable> variables) {
 
     if(variables != null){
-      variables.entrySet().stream().forEach(serverVariableEntry -> this.variables.add(new PostmanVariable()
-              .addName(serverVariableEntry.getKey())
+      variables.forEach((key, value) -> this.variables.add(new PostmanVariable()
+              .addName(key)
               .addType("string")
-              .addDefaultValue(serverVariableEntry.getValue().getDefault())));
+              .addDefaultValue(value.getDefault())));
     }
 
     return super.fromServerVariables(variables);
@@ -248,7 +246,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       // build pathSegments
       String[] pathSegments = codegenOperation.path.substring(1).split("/");
       codegenOperation.vendorExtensions.put("pathSegments", pathSegments);
-      codegenOperation.responses.stream().forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
+      codegenOperation.responses.forEach(r -> r.vendorExtensions.put("pathSegments", pathSegments));
 
       List<PostmanRequestItem> postmanRequests = getPostmanRequests(codegenOperation);
       if(postmanRequests != null) {
@@ -259,26 +257,6 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
           postmanRequests = createGeneratedVariables(postmanRequests);
         }
         codegenOperation.vendorExtensions.put("postmanRequests", postmanRequests);
-      }
-
-      // set all available responses
-      for(CodegenResponse codegenResponse : codegenOperation.responses) {
-
-        codegenResponse.vendorExtensions.put("status", getStatus(codegenResponse));
-
-//        TODO: set response for each request
-//        if(postmanRequests != null) {
-//          // re-use request body for each response
-//          codegenResponse.vendorExtensions.put("requestBody", postmanRequests);
-//        }
-//        String responseBody = getResponseBody(codegenResponse);
-//        if(responseBody != null) {
-//          codegenResponse.vendorExtensions.put("responseBody", responseBody);
-//          codegenResponse.vendorExtensions.put("hasResponseBody", true);
-//        } else {
-//          codegenResponse.vendorExtensions.put("hasResponseBody", false);
-//        }
-
       }
 
       if(folderStrategy.equalsIgnoreCase("tags")) {
@@ -295,7 +273,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   void addToMap(CodegenOperation codegenOperation){
 
-    String key = null;
+    String key;
     if(codegenOperation.tags == null || codegenOperation.tags.isEmpty()) {
       key = "default";
     } else {
@@ -312,7 +290,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     codegenOperationsByTag.put(key, list);
 
     // sort requests by path
-    Collections.sort(list, Comparator.comparing(obj -> obj.path));
+    list.sort(Comparator.comparing(obj -> obj.path));
 
   }
 
@@ -320,34 +298,38 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     codegenOperationsList.add(codegenOperation);
 
     // sort requests by path
-    Collections.sort(codegenOperationsList, Comparator.comparing(obj -> obj.path));
+    codegenOperationsList.sort(Comparator.comparing(obj -> obj.path));
   }
 
-  String getResponseBody(CodegenResponse codegenResponse) {
-    String responseBody = "";
+  List<PostmanResponse> getResponseExamples(CodegenResponse codegenResponse, String message) {
+    List<PostmanResponse> postmanResponses = new ArrayList<>();
 
-    if(codegenResponse.getContent() != null && codegenResponse.getContent().get("application/json") != null &&
+    if (codegenResponse.getContent() != null && codegenResponse.getContent().get("application/json") != null &&
             codegenResponse.getContent().get("application/json").getExamples() != null) {
-      // find in components/examples
-      String exampleRef = codegenResponse.getContent().get("application/json").getExamples()
-              .values().iterator().next().get$ref();
-      if(exampleRef != null) {
-        Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
-        responseBody = new ExampleJsonHelper().getJsonFromExample(example);
+
+      var examples = codegenResponse.getContent().get("application/json").getExamples();
+      for (Map.Entry<String, Example> entry : examples.entrySet()) {
+        String key = entry.getKey();
+        String ref = entry.getValue().get$ref();
+
+        if(ref != null) {
+          Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(ref));
+          String response = new ExampleJsonHelper().getJsonFromExample(example);
+          postmanResponses.add(new PostmanResponse(key, codegenResponse, message, response));
+        }
       }
-    } else if(codegenResponse.getContent() != null) {
-      // find in context examples
-      Map<String, Example> maxExamples = codegenResponse.getContent().get("application/json").getExamples();
-      if(maxExamples != null && maxExamples.values().iterator().hasNext()) {
-        responseBody = new ExampleJsonHelper().getJsonFromExample(maxExamples.values().iterator().next());
-      }
+
+    } else if (codegenResponse.getContent() != null) {
+      // TODO : Implement
     }
 
-    return responseBody;
+    return postmanResponses;
   }
 
   // from OpenAPI operation to n Postman requests
   List<PostmanRequestItem> getPostmanRequests(CodegenOperation codegenOperation) {
+    // Note : For all PostmanRequestItem who get created without an id parameter, no responses will be available
+
     List<PostmanRequestItem> items = new ArrayList<>();
 
     if(codegenOperation.getHasBodyParam()) {
@@ -368,7 +350,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
             Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
             String exampleAsString = new ExampleJsonHelper().getJsonFromExample(example);
 
-            items.add(new PostmanRequestItem(example.getSummary(), exampleAsString));
+            items.add(new PostmanRequestItem(example.getSummary(), exampleAsString, entry.getKey()));
           }
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
@@ -386,10 +368,25 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
       items.add(new PostmanRequestItem(codegenOperation.summary, ""));
     }
 
+    // Grabbing responses
+    List<CodegenResponse> responses = codegenOperation.responses;
+    List<PostmanResponse> allPostmanResponses = new ArrayList<>();
+    for (CodegenResponse response : responses) {
+        List<PostmanResponse> postmanResponses = getResponseExamples(response, response.message);
+        allPostmanResponses.addAll(postmanResponses);
+    }
+
+    // Adding responses to corresponding requests
+    for(PostmanRequestItem item: items){
+      List<PostmanResponse> postmanResponses = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
+      if(!postmanResponses.isEmpty()){
+        postmanResponses.forEach(r -> r.setOriginalRequest(item));
+        item.addResponses(postmanResponses);
+      }
+    }
+
     return items;
   }
-
-
 
   // split, trim
   void extractPostmanVariableNames(String postmanVariablesCsv) {
@@ -459,7 +456,7 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   /**
    * override with any special text escaping logic to handle unsafe
-   * characters so as to avoid code injection
+   * characters to avoid code injection
    *
    * @param input String to be cleaned up
    * @return string with unsafe characters removed or escaped
@@ -528,56 +525,9 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
     return ret;
   }
 
-  /**
-   * get HTTP Status Code as text
-   * @param codegenResponse
-   * @return
-   */
-  String getStatus(CodegenResponse codegenResponse) {
-    String ret = "";
-
-    if (codegenResponse.is2xx) {
-      if (codegenResponse.code.equalsIgnoreCase("200")) {
-        ret = "OK";
-      } else if (codegenResponse.code.equalsIgnoreCase("201")) {
-        ret = "Created";
-      } else {
-        ret = "Success";
-      }
-    } else if (codegenResponse.is3xx) {
-      ret = "Redirection";
-    }
-    if (codegenResponse.is4xx) {
-      if (codegenResponse.code.equalsIgnoreCase("400")) {
-        ret = "Bad Request";
-      } else if (codegenResponse.code.equalsIgnoreCase("401")) {
-        ret = "Unauthorized";
-      } else if (codegenResponse.code.equalsIgnoreCase("403")) {
-        ret = "Forbidden";
-      } else if (codegenResponse.code.equalsIgnoreCase("404")) {
-        ret = "Not Found";
-      } else if (codegenResponse.code.equalsIgnoreCase("409")) {
-        ret = "Conflict";
-      } else {
-        ret = "Client Error";
-      }
-    }
-    if (codegenResponse.is5xx) {
-      if (codegenResponse.code.equalsIgnoreCase("500")) {
-        ret = "Internal Server Error";
-      } else if (codegenResponse.code.equalsIgnoreCase("501")) {
-        ret = "Not Implemented";
-      } else {
-        ret = "Server Error";
-      }
-    }
-
-    return ret;
-  }
-
   // make sure operation name is always set
   String getSummary(CodegenOperation codegenOperation) {
-    String ret = null;
+    String ret;
 
     if(codegenOperation.summary != null) {
       ret = codegenOperation.summary;
@@ -591,8 +541,8 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
   /**
    * Format text to include in JSON file
-   * @param description
-   * @return
+   * @param description potentially multiline input with special characters
+   * @return formatted description
    */
   String formatDescription(String description) {
 

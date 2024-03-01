@@ -3,3 +3,6 @@ target
 LocalPostmanV2GeneratorTest.java
 .DS_Store
 output
+/runScript.sh
+/postman.bkp.json
+/debugScript.sh
