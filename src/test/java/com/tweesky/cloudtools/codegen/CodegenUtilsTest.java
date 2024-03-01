@@ -50,5 +50,16 @@ public class CodegenUtilsTest extends TestCase {
         assertEquals(
                 CodegenUtils.getStatus(defaultCodegen.fromResponse("501", new ApiResponse().description("501 response"))),
                 "Not Implemented");
+
+
+        assertEquals(
+                CodegenUtils.getStatus(defaultCodegen.fromResponse("599", new ApiResponse().description("599 response"))),
+                "Not Implemented");
+    }
+
+    public void testGetStatusForUnknownvalue() {
+        assertEquals(
+                CodegenUtils.getStatus(defaultCodegen.fromResponse("599", new ApiResponse().description("599 response"))),
+                "");
     }
 }

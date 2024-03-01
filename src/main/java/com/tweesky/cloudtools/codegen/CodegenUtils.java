@@ -4,6 +4,7 @@ import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.openapitools.codegen.CodegenResponse;
 
 import java.net.HttpURLConnection;
+import java.util.Objects;
 
 public class CodegenUtils {
 
@@ -18,6 +19,9 @@ public class CodegenUtils {
             return "";
         }
 
-        return EnglishReasonPhraseCatalog.INSTANCE.getReason(Integer.parseInt(codegenResponse.code), null);
+        return Objects.requireNonNullElse(
+                EnglishReasonPhraseCatalog.INSTANCE.getReason(Integer.parseInt(codegenResponse.code), null)
+                , ""
+        );
     }
 }
