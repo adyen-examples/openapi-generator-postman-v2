@@ -1,4 +1,4 @@
-FROM maven:3.5-jdk-11 AS build
+FROM maven:3.8-jdk-11 AS build
 COPY src /src
 COPY pom.xml /
 COPY script.sh /
