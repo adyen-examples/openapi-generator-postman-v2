@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.openapitools.codegen.CodegenParameter;
 import org.openapitools.codegen.CodegenProperty;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -150,5 +151,122 @@ public class ExampleJsonHelperTest {
         assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(city));
 
     }
+
+    @Test
+    public void convertNestedArrayListToJson() {
+
+        final String EXPECTED =
+                "{\\n " +
+                        "\\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\",\\n " +
+                        "\\\"tags\\\": [\\\"ams\\\", \\\"adam\\\"]" +
+                        "\\n}";
+
+        LinkedHashMap<String, Object> city = new LinkedHashMap<>();
+        city.put("id", 1);
+        city.put("city", "Amsterdam");
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add("ams");
+        tags.add("adam");
+        city.put("tags", tags);
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(city));
+
+    }
+
+    @Test
+    public void convertNestedEmptyArrayListToJson() {
+
+        final String EXPECTED =
+                "{\\n " +
+                        "\\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\",\\n " +
+                        "\\\"tags\\\": []" +
+                        "\\n}";
+
+        LinkedHashMap<String, Object> city = new LinkedHashMap<>();
+        city.put("id", 1);
+        city.put("city", "Amsterdam");
+        ArrayList<String> tags = new ArrayList<>();
+        city.put("tags", tags);
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(city));
+
+    }
+
+    @Test
+    public void convertNestedArrayListIncludingDoubleQuotesToJson() {
+
+        final String EXPECTED =
+                "{\\n " +
+                        "\\\"id\\\": 1,\\n \\\"city\\\": \\\"Amsterdam\\\",\\n " +
+                        "\\\"tags\\\": [{\\\"live\\\": \\\"false\\\", \\\"demo\\\": \\\"yes\\\"}]" +
+                        "\\n}";
+
+        LinkedHashMap<String, Object> city = new LinkedHashMap<>();
+        city.put("id", 1);
+        city.put("city", "Amsterdam");
+        ArrayList<String> tags = new ArrayList<>();
+        tags.add("{\"live\": \"false\", \"demo\": \"yes\"}");
+        city.put("tags", tags);
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(city));
+
+    }
+
+    @Test
+    public void convertNestedArrayObjectListToJson() {
+
+        final String EXPECTED =
+                "{\\n " +
+                        "\\\"id\\\": 1,\\n " +
+                        "\\\"lineItems\\\": [" +
+                        "{\\n \\\"quantity\\\": 10,\\n \\\"description\\\": \\\"item1\\\"\\n}, " +
+                        "{\\n \\\"quantity\\\": 100,\\n \\\"description\\\": \\\"item2\\\"\\n}, " +
+                        "{\\n \\\"quantity\\\": 20,\\n \\\"description\\\": \\\"item3\\\"\\n}" +
+                        "]" +
+                "\\n}";
+
+        LinkedHashMap<String, Object> order = new LinkedHashMap<>();
+        order.put("id", 1);
+        ArrayList<LinkedHashMap> lineItems = new ArrayList<>();
+        lineItems.add(new LinkedHashMap<String, Object>() {{
+            put("quantity", 10);
+            put("description", "item1");
+        }});
+        lineItems.add(new LinkedHashMap<String, Object>() {{
+            put("quantity", 100);
+            put("description", "item2");
+        }});
+        lineItems.add(new LinkedHashMap<String, Object>() {{
+            put("quantity", 20);
+            put("description", "item3");
+        }});
+
+        order.put("lineItems", lineItems);
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(order));
+
+    }
+
+    class LineItem {
+        Integer quantity;
+        String description;
+
+        LineItem(Integer quantity, String description) {
+            this.quantity = quantity;
+            this.description = description;
+        }
+    }
+
+
+
+    @Test
+    public void formatString() {
+        final String EXPECTED = "{\\\\\\\"live\\\\\\\": \\\\\\\"false\\\\\\\", \\\\\\\"demo\\\\\\\": \\\\\\\"yes\\\\\\\"}";
+
+        String json = "{\"live\": \"false\", \"demo\": \"yes\"}";
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().formatString(json));
+    }
+
 
 }
