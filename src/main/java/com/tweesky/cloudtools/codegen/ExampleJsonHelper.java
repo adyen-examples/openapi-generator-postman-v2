@@ -166,7 +166,7 @@ public class ExampleJsonHelper {
             if(element instanceof String) {
                 ret = ret + getStringArrayElement((String) element) + ", ";
             } else if(element instanceof LinkedHashMap) {
-                ret = traverseMap((LinkedHashMap<String, Object>) element, ret);
+                ret = traverseMap((LinkedHashMap<String, Object>) element, ret) + ", ";
             }
         }
 
