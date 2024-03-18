@@ -357,6 +357,7 @@ components:
         dateOfBirth: '1997-10-31'
         emailVerified: true
         createDate: '2019-08-24'
+        profile: '{"verified": "false", "demo": "yes"}'
 tags:
   - name: basic
     description: Basic tag
