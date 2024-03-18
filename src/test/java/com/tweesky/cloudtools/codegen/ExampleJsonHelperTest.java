@@ -213,6 +213,53 @@ public class ExampleJsonHelperTest {
     }
 
     @Test
+    public void convertNestedArrayObjectListToJson() {
+
+        final String EXPECTED =
+                "{\\n " +
+                        "\\\"id\\\": 1,\\n " +
+                        "\\\"lineItems\\\": [" +
+                        "{\\n \\\"quantity\\\": 10,\\n \\\"description\\\": \\\"item1\\\"\\n}, " +
+                        "{\\n \\\"quantity\\\": 100,\\n \\\"description\\\": \\\"item2\\\"\\n}, " +
+                        "{\\n \\\"quantity\\\": 20,\\n \\\"description\\\": \\\"item3\\\"\\n}" +
+                        "]" +
+                "\\n}";
+
+        LinkedHashMap<String, Object> order = new LinkedHashMap<>();
+        order.put("id", 1);
+        ArrayList<LinkedHashMap> lineItems = new ArrayList<>();
+        lineItems.add(new LinkedHashMap<String, Object>() {{
+            put("quantity", 10);
+            put("description", "item1");
+        }});
+        lineItems.add(new LinkedHashMap<String, Object>() {{
+            put("quantity", 100);
+            put("description", "item2");
+        }});
+        lineItems.add(new LinkedHashMap<String, Object>() {{
+            put("quantity", 20);
+            put("description", "item3");
+        }});
+
+        order.put("lineItems", lineItems);
+
+        assertEquals(EXPECTED, new ExampleJsonHelper().convertToJson(order));
+
+    }
+
+    class LineItem {
+        Integer quantity;
+        String description;
+
+        LineItem(Integer quantity, String description) {
+            this.quantity = quantity;
+            this.description = description;
+        }
+    }
+
+
+
+    @Test
     public void formatString() {
         final String EXPECTED = "{\\\\\\\"live\\\\\\\": \\\\\\\"false\\\\\\\", \\\\\\\"demo\\\\\\\": \\\\\\\"yes\\\\\\\"}";
 
