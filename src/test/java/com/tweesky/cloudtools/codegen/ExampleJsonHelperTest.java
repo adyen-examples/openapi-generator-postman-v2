@@ -247,18 +247,6 @@ public class ExampleJsonHelperTest {
 
     }
 
-    class LineItem {
-        Integer quantity;
-        String description;
-
-        LineItem(Integer quantity, String description) {
-            this.quantity = quantity;
-            this.description = description;
-        }
-    }
-
-
-
     @Test
     public void formatString() {
         final String EXPECTED = "{\\\\\\\"live\\\\\\\": \\\\\\\"false\\\\\\\", \\\\\\\"demo\\\\\\\": \\\\\\\"yes\\\\\\\"}";
@@ -267,6 +255,5 @@ public class ExampleJsonHelperTest {
 
         assertEquals(EXPECTED, new ExampleJsonHelper().formatString(json));
     }
-
 
 }
