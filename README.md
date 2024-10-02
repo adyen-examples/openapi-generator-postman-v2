@@ -1,16 +1,18 @@
 # OpenAPI Generator for Postman v2
 
 ## Overview
-Implementation of the OpenAPI generator for Postman format v2.1.
+Implementation of the OpenAPI generator for Postman format v2.1: from the [Adyen OpenAPI files](https://github.com/Adyen/adyen-openapi/) it generates the Postman collections in the Postman V2 JSON format.  
 
-From an OpenAPI file it generates a Postman collection in the Postman V2 JSON format.
+The collections are available on the [AdyenDev Postman space](https://www.postman.com/adyendev) as well as in the [Adyen Postman GitHub repository](https://github.com/Adyen/adyen-postman/tree/main/postman).
 
-See the available [options](#config-options) to customise the generation.
+More on our blog [Effortless API Testing with the Adyen Postman collections](https://www.adyen.com/knowledge-hub/adyen-postman-collections).
 
 ## Usage
 
 * [Run with Docker](#run-with-docker)
 * [Build from source](#run-from-source)
+
+See the available [options](#config-options) to customise the generation.
 
 ### Run with Docker
 
