@@ -3,7 +3,7 @@ name: Push to Github Packages
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [main]
 
 env:
   REGISTRY: ghcr.io
@@ -45,5 +45,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          #tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
