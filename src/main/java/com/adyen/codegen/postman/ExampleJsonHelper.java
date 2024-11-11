@@ -1,4 +1,4 @@
-package com.tweesky.cloudtools.codegen;
+package com.adyen.codegen.postman;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.tweesky.cloudtools.codegen.PostmanV2Generator.JSON_ESCAPE_DOUBLE_QUOTE;
-import static com.tweesky.cloudtools.codegen.PostmanV2Generator.JSON_ESCAPE_NEW_LINE;
+import static com.adyen.codegen.postman.PostmanV2Generator.JSON_ESCAPE_DOUBLE_QUOTE;
+import static com.adyen.codegen.postman.PostmanV2Generator.JSON_ESCAPE_NEW_LINE;
 
 /**
  * Extract and format JSON examples

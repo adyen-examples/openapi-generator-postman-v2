@@ -1,4 +1,4 @@
-package com.tweesky.cloudtools.codegen;
+package com.adyen.codegen.postman;
 
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import junit.framework.TestCase;

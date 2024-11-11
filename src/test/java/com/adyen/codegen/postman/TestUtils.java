@@ -1,4 +1,4 @@
-package com.tweesky.cloudtools.codegen;
+package com.adyen.codegen.postman;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
