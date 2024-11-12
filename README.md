@@ -28,13 +28,13 @@ and requires a valid API key from Postman's integrations [dashboard](https://web
 ```docker
 # generate only
 docker run -v $(pwd):/usr/src/app \
-   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate \
+   -it --rm --name postmanv2-container ghcr.io/adyen-examples/openapi-generator-postman-v2:main generate \
    -i src/test/resources/SampleProject.yaml \
    -o tmp 
 
 # generate only (with additional parameters)
 docker run -v $(pwd):/usr/src/app \
-   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 generate \
+   -it --rm --name postmanv2-container ghcr.io/adyen-examples/openapi-generator-postman-v2:main generate \
    -i src/test/resources/SampleProject.yaml \
    -o tmp \
    --additional-properties folderStrategy=Tags,postmanVariables=MY_VAR1-ANOTHERVAR
@@ -44,7 +44,7 @@ docker run -v $(pwd):/usr/src/app \
 # note: require POSTMAN API KEY
 docker run -v $(pwd):/usr/src/app \
    -e POSTMAN_API_KEY=YOUR_POSTMAN_API_KEY \
-   -it --rm --name postmanv2-container gcatanese/openapi-generator-postman-v2 push \
+   -it --rm --name postmanv2-container ghcr.io/adyen-examples/openapi-generator-postman-v2:main push \
    -i src/test/resources/SampleProject.yaml \
    -o tmp \
    --additional-properties folderStrategy=Tags,postmanVariables=MY_VAR1-ANOTHERVAR      
@@ -59,7 +59,7 @@ Build `postman-v2` from source
 Run OpenAPI Generator adding `postman-v2` jar file in the class path and specifying the `PostmanV2Generator` generator:
 ```shell
 java -cp target/openapi-generator-postman-v2.jar:/openapi-generator/modules/openapi-generator-cli/target/openapi-generator-cli.jar \
-  org.openapitools.codegen.OpenAPIGenerator generate -g com.tweesky.cloudtools.codegen.PostmanV2Generator \
+  org.openapitools.codegen.OpenAPIGenerator generate -g com.adyen.codegen.postman.PostmanV2Generator \
   -i src/test/resources/BasicJson.json -o output
 ```
 ## METADATA

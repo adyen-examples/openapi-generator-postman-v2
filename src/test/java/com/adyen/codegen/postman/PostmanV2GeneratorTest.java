@@ -1,7 +1,7 @@
-package com.tweesky.cloudtools.codegen;
+package com.adyen.codegen.postman;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
+import com.adyen.codegen.postman.model.PostmanRequestItem;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

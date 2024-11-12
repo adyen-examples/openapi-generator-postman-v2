@@ -1,4 +1,4 @@
-package com.tweesky.cloudtools.codegen.model;
+package com.adyen.codegen.postman.model;
 
 import java.util.Objects;
 

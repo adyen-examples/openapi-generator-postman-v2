@@ -1,8 +1,8 @@
-package com.tweesky.cloudtools.codegen;
+package com.adyen.codegen.postman;
 
-import com.tweesky.cloudtools.codegen.model.PostmanRequestItem;
-import com.tweesky.cloudtools.codegen.model.PostmanResponse;
-import com.tweesky.cloudtools.codegen.model.PostmanVariable;
+import com.adyen.codegen.postman.model.PostmanRequestItem;
+import com.adyen.codegen.postman.model.PostmanResponse;
+import com.adyen.codegen.postman.model.PostmanVariable;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Schema;

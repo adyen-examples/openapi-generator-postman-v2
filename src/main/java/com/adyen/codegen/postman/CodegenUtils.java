@@ -1,4 +1,4 @@
-package com.tweesky.cloudtools.codegen;
+package com.adyen.codegen.postman;
 
 import org.apache.http.impl.EnglishReasonPhraseCatalog;
 import org.openapitools.codegen.CodegenResponse;

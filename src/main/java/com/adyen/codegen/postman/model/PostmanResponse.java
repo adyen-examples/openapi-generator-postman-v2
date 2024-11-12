@@ -1,6 +1,6 @@
-package com.tweesky.cloudtools.codegen.model;
+package com.adyen.codegen.postman.model;
 
-import com.tweesky.cloudtools.codegen.CodegenUtils;
+import com.adyen.codegen.postman.CodegenUtils;
 import org.openapitools.codegen.CodegenResponse;
 
 public class PostmanResponse {
