@@ -5,7 +5,7 @@ COPY script.sh /
 RUN mvn -f /pom.xml clean package
 
 
-FROM adoptopenjdk:11-jre-hotspot
+FROM adoptopenjdk:11.0.11_9-jre-hotspot
 
 WORKDIR /usr/src/app
 
