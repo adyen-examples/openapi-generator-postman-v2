@@ -64,6 +64,7 @@ public class PostmanV2GeneratorTest {
     Assert.assertTrue(postmanV2Generator.isCreatePostmanVariables());
     Assert.assertArrayEquals(postmanV2Generator.postmanVariableNames, new String[]{"VAR1", "VAR2", "VAR3"});
   }
+
   @Test
   public void testBasicGeneration() throws IOException {
 
@@ -860,6 +861,42 @@ public class PostmanV2GeneratorTest {
             "                                    \"body\" : \"\"\n" +
             "                                }]");
 
+  }
+
+  @Test
+  public void testInlineExamples() throws IOException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/ForeignExchangeService-v1.json")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+    TestUtils.assertFileContains(path, "\"schema\": \"https://schema.getpostman.com/json/collection/v2.1.0/collection.json\"");
+
+    // verify request name (from summary)
+    TestUtils.assertFileContains(path, "\"name\": \"Foreign Exchange API\"");
+    // verify request endpoint
+    TestUtils.assertFileContains(path, "\"name\": \"/rates/calculate\",");
+    // verify response is included
+    TestUtils.assertFileContains(path, "\"response\": [\n" +
+            "                                        {\"name\": \"Successful operation\",\n" +
+            "                                        \"code\": 200,\n" +
+            "                                        \"status\": \"OK\",\n" +
+            "                                        \"header\": [{\n" +
+            "                                        \"key\": \"Content-Type\",\n" +
+            "                                        \"value\": \"application/json\"}\n");
   }
 
 }
