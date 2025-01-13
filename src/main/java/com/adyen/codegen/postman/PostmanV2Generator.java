@@ -312,11 +312,16 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         String key = entry.getKey();
         String ref = entry.getValue().get$ref();
 
-        if(ref != null) {
+        String response;
+        if (ref != null) {
+          // get example by $ref
           Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(ref));
-          String response = new ExampleJsonHelper().getJsonFromExample(example);
-          postmanResponses.add(new PostmanResponse(key, codegenResponse, message, response));
+          response = new ExampleJsonHelper().getJsonFromExample(example);
+        } else {
+          // get inline example
+          response = new ExampleJsonHelper().getJsonFromExample(entry.getValue());
         }
+        postmanResponses.add(new PostmanResponse(key, codegenResponse, message, response));
       }
 
     } else if (codegenResponse.getContent() != null) {
@@ -339,19 +344,29 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
         items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
       } else {
         // get from examples
-        if (codegenOperation.bodyParam.example != null) {
-          // find in bodyParam example
-          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example)));
-        } else if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
+        if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
                 codegenOperation.bodyParam.getContent().get("application/json").getExamples() != null) {
           // find in components/examples
           for (Map.Entry<String, Example> entry : codegenOperation.bodyParam.getContent().get("application/json").getExamples().entrySet()) {
             String exampleRef = entry.getValue().get$ref();
-            Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
-            String exampleAsString = new ExampleJsonHelper().getJsonFromExample(example);
 
-            items.add(new PostmanRequestItem(example.getSummary(), exampleAsString, entry.getKey()));
+            String exampleAsString;
+            String exampleName;
+            if (exampleRef != null) {
+              // get example by $ref
+              Example example = this.openAPI.getComponents().getExamples().get(extractExampleByName(exampleRef));
+              exampleAsString = new ExampleJsonHelper().getJsonFromExample(example);
+              exampleName = example.getSummary();
+            } else {
+              // get inline example
+              exampleAsString = new ExampleJsonHelper().getJsonFromExample(entry.getValue());
+              exampleName = entry.getValue().getSummary();
+            }
+            items.add(new PostmanRequestItem(exampleName, exampleAsString, entry.getKey()));
           }
+        } else if (codegenOperation.bodyParam.example != null) {
+          // find in bodyParam example
+          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example)));
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
           String exampleAsString = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.getSchema().getExample());
