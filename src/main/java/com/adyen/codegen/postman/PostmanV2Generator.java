@@ -337,11 +337,12 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
 
     List<PostmanRequestItem> items = new ArrayList<>();
 
-    if(codegenOperation.getHasBodyParam()) {
+    if (codegenOperation.getHasBodyParam()) {
       // operation with bodyParam
       if (requestParameterGeneration.equalsIgnoreCase("Schema")) {
         // get from schema
-        items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
+        items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam),
+                codegenOperation.httpMethod));
       } else {
         // get from examples
         if (codegenOperation.bodyParam.getContent().get("application/json") != null &&
@@ -362,44 +363,60 @@ public class PostmanV2Generator extends DefaultCodegen implements CodegenConfig 
               exampleAsString = new ExampleJsonHelper().getJsonFromExample(entry.getValue());
               exampleName = entry.getValue().getSummary();
             }
-            items.add(new PostmanRequestItem(exampleName, exampleAsString, entry.getKey()));
+            items.add(new PostmanRequestItem(exampleName, exampleAsString, entry.getKey(), codegenOperation.httpMethod));
           }
         } else if (codegenOperation.bodyParam.example != null) {
           // find in bodyParam example
-          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example)));
+          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.example),
+                  codegenOperation.httpMethod));
         } else if (codegenOperation.bodyParam.getSchema() != null) {
           // find in schema example
           String exampleAsString = new ExampleJsonHelper().formatJson(codegenOperation.bodyParam.getSchema().getExample());
-          items.add(new PostmanRequestItem(codegenOperation.summary, exampleAsString));
+          items.add(new PostmanRequestItem(codegenOperation.summary, exampleAsString, codegenOperation.httpMethod));
         } else {
           // example not found
           // get from schema
-          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam)));
+          items.add(new PostmanRequestItem(codegenOperation.summary, new ExampleJsonHelper().getJsonFromSchema(codegenOperation.bodyParam), codegenOperation.httpMethod));
 
         }
       }
     } else {
       // operation without bodyParam
-      items.add(new PostmanRequestItem(codegenOperation.summary, ""));
+      PostmanRequestItem postmanRequestItem = new PostmanRequestItem(codegenOperation.summary, "", codegenOperation.httpMethod);
+      items.add(postmanRequestItem);
     }
 
     // Grabbing responses
     List<CodegenResponse> responses = codegenOperation.responses;
     List<PostmanResponse> allPostmanResponses = new ArrayList<>();
     for (CodegenResponse response : responses) {
-        List<PostmanResponse> postmanResponses = getResponseExamples(response, response.message);
-        allPostmanResponses.addAll(postmanResponses);
+      List<PostmanResponse> postmanResponses = getResponseExamples(response, response.message);
+      allPostmanResponses.addAll(postmanResponses);
     }
 
     // Adding responses to corresponding requests
-    for(PostmanRequestItem item: items){
-      List<PostmanResponse> postmanResponses = allPostmanResponses.stream().filter( r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
-      if(!postmanResponses.isEmpty()){
+    for (PostmanRequestItem item : items) {
+      List<PostmanResponse> postmanResponses = allPostmanResponses.stream().filter(r -> Objects.equals(r.getId(), item.getId())).collect(Collectors.toList());
+      if (!postmanResponses.isEmpty()) {
         postmanResponses.forEach(r -> r.setOriginalRequest(item));
         item.addResponses(postmanResponses);
+      } else {
+        // no matching response example
+        if (item.getHttpMethod() != null && item.getHttpMethod().equals("GET")) {
+          // in case of GET use first response example
+          if (allPostmanResponses.size() > 0) {
+            PostmanResponse postmanResponse = allPostmanResponses.stream()
+                    .findFirst()
+                    .orElse(null);
+
+            if(postmanResponse != null) {
+              postmanResponse.setOriginalRequest(item);
+              item.addResponse(postmanResponse);
+            }
+          }
+        }
       }
     }
-
     return items;
   }
 

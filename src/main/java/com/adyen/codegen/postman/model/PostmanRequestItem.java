@@ -8,17 +8,20 @@ public class PostmanRequestItem {
     private String id;
     private String name;
     private String body;
+    private String httpMethod;
 
     private List<PostmanResponse> responses;
 
-    public PostmanRequestItem(String name, String body, String id) {
+    public PostmanRequestItem(String name, String body, String id, String httpMethod) {
         this.id = id;
         this.name = name;
         this.body = body;
+        this.httpMethod = httpMethod;
     }
-    public PostmanRequestItem(String name, String body) {
+    public PostmanRequestItem(String name, String body, String httpMethod) {
         this.name = name;
         this.body = body;
+        this.httpMethod = httpMethod;
         this.id = ""; // TODO : do better later
     }
 
@@ -44,6 +47,14 @@ public class PostmanRequestItem {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
     }
 
     public List<PostmanResponse> getResponses() {
