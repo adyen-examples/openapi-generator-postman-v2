@@ -413,7 +413,7 @@ public class PostmanV2GeneratorTest {
     postmanV2Generator.postmanVariableNames = new String[]{"MY_VAR_1", "MY_VAR_2"};
 
     List<PostmanRequestItem> requestItems = new ArrayList<>();
-    requestItems.add(new PostmanRequestItem("get by id", STR));
+    requestItems.add(new PostmanRequestItem("get by id", STR, "GET"));
 
     requestItems = postmanV2Generator.createPostmanVariables(requestItems);
 
@@ -897,6 +897,32 @@ public class PostmanV2GeneratorTest {
             "                                        \"header\": [{\n" +
             "                                        \"key\": \"Content-Type\",\n" +
             "                                        \"value\": \"application/json\"}\n");
+  }
+
+  @Test
+  public void getGetResponseExample() throws IOException, ParseException {
+
+    File output = Files.createTempDirectory("postmantest_").toFile();
+    output.deleteOnExit();
+
+    final CodegenConfigurator configurator = new CodegenConfigurator()
+            .setGeneratorName("postman-v2")
+            .setInputSpec("./src/test/resources/CheckoutService-v71.yaml")
+            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
+
+    final ClientOptInput clientOptInput = configurator.toClientOptInput();
+    DefaultGenerator generator = new DefaultGenerator();
+    List<File> files = generator.opts(clientOptInput).generate();
+
+    System.out.println(files);
+    files.forEach(File::deleteOnExit);
+
+    Path path = Paths.get(output + "/postman.json");
+    TestUtils.assertFileExists(path);
+
+    TestUtils.assertFileContains(path, "\"description\": \"Retrieves the payment link details using the payment link `id`.");
+    TestUtils.assertFileContains(path, "\"name\": \"Successful getPaymentLink GET response example\",");
+
   }
 
 }

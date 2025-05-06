@@ -751,7 +751,7 @@ paths:
                   $ref: '#/components/examples/get-paymentLinks-linkId-basic-200'
               schema:
                 $ref: '#/components/schemas/PaymentLinkResponse'
-          description: OK - the request has succeeded.
+          description: Successful getPaymentLink GET response example
         '400':
           content:
             application/json:
