@@ -169,7 +169,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <openapi-generator-version>7.4.0</openapi-generator-version>
+        <openapi-generator-version>7.8.0</openapi-generator-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <junit-version>4.13.2</junit-version>
         <testng.version>7.10.2</testng.version>
